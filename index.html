@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Data Siswa PKL & Guru Pembimbing</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="h-full text-slate-800 font-sans antialiased bg-slate-50 flex flex-col">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-slate-900 text-white sticky top-0 z-30 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-brand-500 p-2.5 rounded-xl shadow-lg shadow-brand-500/30">
+                    <i class="fa-solid fa-graduation-cap text-xl text-white"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight tracking-wide">MONITORING DATA PKL</h1>
+                    <p class="text-xs text-slate-400">Siswa, DUDI & Guru Pembimbing</p>
+                </div>
+            </div>
+
+            <!-- Sync Status & Reload Button -->
+            <div class="flex items-center space-x-3 text-xs">
+                <span id="syncStatus" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Tersinkron Spreadsheet
+                </span>
+                <button onclick="fetchSpreadsheetData()" title="Muat Ulang Data" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center justify-center border border-slate-700">
+                    <i id="refreshIcon" class="fa-solid fa-rotate-right text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Stat Cards Summary -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+            <div class="glass-card rounded-2xl p-4 flex items-center space-x-3 shadow-sm border border-slate-200/80">
+                <div class="p-3 bg-blue-50 text-blue-600 rounded-xl">
+                    <i class="fa-solid fa-user-graduate text-xl sm:text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-medium text-slate-500">Total Siswa</p>
+                    <h3 id="statTotalSiswa" class="text-xl sm:text-2xl font-bold text-slate-800">0</h3>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-4 flex items-center space-x-3 shadow-sm border border-slate-200/80">
+                <div class="p-3 bg-amber-50 text-amber-600 rounded-xl">
+                    <i class="fa-solid fa-building text-xl sm:text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-medium text-slate-500">Total DUDI</p>
+                    <h3 id="statTotalDudi" class="text-xl sm:text-2xl font-bold text-slate-800">0</h3>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-4 flex items-center space-x-3 shadow-sm border border-slate-200/80">
+                <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+                    <i class="fa-solid fa-user-tie text-xl sm:text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-medium text-slate-500">Guru Pembimbing</p>
+                    <h3 id="statTotalGuru" class="text-xl sm:text-2xl font-bold text-slate-800">0</h3>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-4 flex items-center space-x-3 shadow-sm border border-slate-200/80">
+                <div class="p-3 bg-purple-50 text-purple-600 rounded-xl">
+                    <i class="fa-solid fa-school text-xl sm:text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-medium text-slate-500">Total Kelas</p>
+                    <h3 id="statTotalKelas" class="text-xl sm:text-2xl font-bold text-slate-800">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter & Search Section -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                <div class="flex items-center space-x-2 text-slate-800">
+                    <i class="fa-solid fa-filter text-brand-600"></i>
+                    <h2 class="font-semibold text-base">Filter & Pencarian Data</h2>
+                </div>
+                <button onclick="resetFilters()" class="self-start sm:self-auto text-xs font-medium text-slate-500 hover:text-brand-600 flex items-center gap-1 transition py-1 px-2.5 rounded-lg hover:bg-slate-100">
+                    <i class="fa-solid fa-rotate-left"></i> Reset Filter
+                </button>
+            </div>
+
+            <!-- Input Fields Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Search Nama Siswa -->
+                <div>
+                    <label for="filterNama" class="block text-xs font-medium text-slate-600 mb-1.5">Nama Siswa</label>
+                    <div class="relative">
+                        <input type="text" id="filterNama" placeholder="Ketik nama siswa..." 
+                            class="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-sm"></i>
+                    </div>
+                </div>
+
+                <!-- Dropdown Kelas -->
+                <div>
+                    <label for="filterKelas" class="block text-xs font-medium text-slate-600 mb-1.5">Kelas</label>
+                    <div class="relative">
+                        <select id="filterKelas" class="w-full pl-9 pr-8 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition cursor-pointer">
+                            <option value="">Semua Kelas</option>
+                        </select>
+                        <i class="fa-solid fa-school absolute left-3 top-2.5 text-slate-400 text-sm"></i>
+                        <i class="fa-solid fa-chevron-down absolute right-3 top-3 text-slate-400 text-xs pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <!-- Dropdown DUDI -->
+                <div>
+                    <label for="filterDudi" class="block text-xs font-medium text-slate-600 mb-1.5">DUDI (Perusahaan)</label>
+                    <div class="relative">
+                        <select id="filterDudi" class="w-full pl-9 pr-8 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition cursor-pointer">
+                            <option value="">Semua DUDI</option>
+                        </select>
+                        <i class="fa-solid fa-building-user absolute left-3 top-2.5 text-slate-400 text-sm"></i>
+                        <i class="fa-solid fa-chevron-down absolute right-3 top-3 text-slate-400 text-xs pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <!-- Dropdown Guru Pembimbing -->
+                <div>
+                    <label for="filterGuru" class="block text-xs font-medium text-slate-600 mb-1.5">Guru Pembimbing</label>
+                    <div class="relative">
+                        <select id="filterGuru" class="w-full pl-9 pr-8 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition cursor-pointer">
+                            <option value="">Semua Guru Pembimbing</option>
+                        </select>
+                        <i class="fa-solid fa-user-check absolute left-3 top-2.5 text-slate-400 text-sm"></i>
+                        <i class="fa-solid fa-chevron-down absolute right-3 top-3 text-slate-400 text-xs pointer-events-none"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Header Bar -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-center space-x-2">
+                <span id="resultCount" class="text-sm font-semibold text-slate-700">Menampilkan 0 data</span>
+                <span id="filterBadge" class="hidden text-xs bg-brand-100 text-brand-800 font-medium px-2 py-0.5 rounded-full">Filtered</span>
+            </div>
+
+            <!-- View Toggle -->
+            <div class="flex items-center space-x-1 bg-slate-200/70 p-1 rounded-xl self-start sm:self-auto text-xs">
+                <button id="btnViewCard" onclick="switchView('card')" class="px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1.5 bg-white text-slate-800 shadow-sm">
+                    <i class="fa-solid fa-grip"></i> Kartu
+                </button>
+                <button id="btnViewTable" onclick="switchView('table')" class="px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
+                    <i class="fa-solid fa-list-ul"></i> Tabel
+                </button>
+            </div>
+        </div>
+
+        <!-- Cards Container -->
+        <div id="cardViewContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <!-- Dynamic Cards inserted here -->
+        </div>
+
+        <!-- Table View Container (Hidden by default) -->
+        <div id="tableViewContainer" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead>
+                        <tr class="bg-slate-100/80 text-slate-600 font-semibold border-b border-slate-200">
+                            <th class="py-3 px-4 w-12 text-center">NO</th>
+                            <th class="py-3 px-4">NAMA SISWA</th>
+                            <th class="py-3 px-4">KELAS</th>
+                            <th class="py-3 px-4">DUDI</th>
+                            <th class="py-3 px-4">GURU PEMBIMBING</th>
+                            <th class="py-3 px-4 text-center">WA GURU</th>
+                            <th class="py-3 px-4">INSTRUKTUR DUDI</th>
+                            <th class="py-3 px-4 text-center">WA INSTRUKTUR</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-slate-100">
+                        <!-- Dynamic Rows inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Empty State Alert -->
+        <div id="emptyState" class="hidden bg-white rounded-2xl p-10 text-center space-y-3 border border-slate-200 shadow-sm">
+            <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+                <i class="fa-solid fa-folder-open"></i>
+            </div>
+            <h3 class="font-semibold text-slate-700 text-base">Tidak ada data ditemukan</h3>
+            <p class="text-xs text-slate-500 max-w-sm mx-auto">Coba sesuaikan kata kunci atau atur ulang filter pencarian Anda.</p>
+            <button onclick="resetFilters()" class="inline-flex items-center gap-2 text-xs bg-brand-600 hover:bg-brand-700 text-white font-medium px-4 py-2 rounded-xl transition shadow-md shadow-brand-500/20">
+                <i class="fa-solid fa-rotate-left"></i> Reset Filter
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Detail Modal -->
+    <div id="detailModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity">
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden transform transition-all border border-slate-100">
+            <div class="bg-slate-900 text-white p-5 flex justify-between items-start">
+                <div>
+                    <span id="modalKelas" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30">
+                        -
+                    </span>
+                    <h3 id="modalNama" class="text-xl font-bold mt-2 leading-snug">-</h3>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white p-1 rounded-lg transition">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-5 text-sm">
+                <!-- DUDI Section -->
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-1">
+                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Lokasi PKL / DUDI</p>
+                    <p id="modalDudi" class="font-semibold text-slate-800 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-building text-amber-500"></i> -
+                    </p>
+                </div>
+
+                <!-- Guru Pembimbing -->
+                <div class="space-y-2">
+                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Guru Pembimbing Sekolah</p>
+                    <div class="flex items-center justify-between bg-emerald-50/60 p-3.5 rounded-xl border border-emerald-100">
+                        <div>
+                            <p id="modalGuru" class="font-semibold text-slate-800">-</p>
+                            <p id="modalWaGuruText" class="text-xs text-slate-500 font-mono mt-0.5">-</p>
+                        </div>
+                        <a id="modalBtnWaGuru" href="#" target="_blank" class="inline-flex items-center gap-1.5 text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg font-medium transition shadow-sm">
+                            <i class="fa-brands fa-whatsapp text-sm"></i> Chat WA
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Instruktur DUDI -->
+                <div class="space-y-2">
+                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Instruktur DUDI / Industri</p>
+                    <div class="flex items-center justify-between bg-blue-50/60 p-3.5 rounded-xl border border-blue-100">
+                        <div>
+                            <p id="modalInstruktur" class="font-semibold text-slate-800">-</p>
+                            <p id="modalWaInstrukturText" class="text-xs text-slate-500 font-mono mt-0.5">-</p>
+                        </div>
+                        <a id="modalBtnWaInstruktur" href="#" target="_blank" class="inline-flex items-center gap-1.5 text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-medium transition shadow-sm">
+                            <i class="fa-brands fa-whatsapp text-sm"></i> Chat WA
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-50 px-6 py-3.5 border-t border-slate-100 flex justify-end">
+                <button onclick="closeModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium text-xs rounded-xl transition">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-4 text-center border-t border-slate-800 mt-auto">
+        <p>&copy; 2026 Portal Data Siswa PKL & Guru Pembimbing. Terhubung dengan Google Sheets.</p>
+    </footer>
+
+    <script>
+        // Spreadsheet Config
+        const SPREADSHEET_ID = '1gjQcd_iHK_hz8-LfaWiy1LMpxV3vWS-kuiLa-W0tmy0';
+        const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
+
+        // Default Sample Data Fallback (If CORS or Sheet network issue occurs)
+        const FALLBACK_DATA = [
+            { no: 1, nama: "Ahmad Rizky Pratama", kelas: "XII RPL 1", dudi: "PT. Teknologi Bangsa", guru: "Drs. Budi Santoso, M.Pd", waGuru: "081234567890", instruktur: "Eko Prasetyo, S.Kom", waInstruktur: "082198765432" },
+            { no: 2, nama: "Siti Nurhaliza", kelas: "XII RPL 1", dudi: "CV. Media Kreatif Jaya", guru: "Siti Rahmawati, S.Pd", waGuru: "081345678901", instruktur: "Dewi Sartika", waInstruktur: "082287654321" },
+            { no: 3, nama: "Bagas Saputra", kelas: "XII TKJ 2", dudi: "PT. Telkom Indonesia", guru: "Drs. Budi Santoso, M.Pd", waGuru: "081234567890", instruktur: "Hendra Wijaya", waInstruktur: "082376543210" },
+            { no: 4, nama: "Dewi Anggraini", kelas: "XII TKJ 2", dudi: "PT. Network Solusindo", guru: "Agus Setiawan, S.T", waGuru: "081456789012", instruktur: "Rian Hidayat", waInstruktur: "082465432109" },
+            { no: 5, nama: "Fajar Ramadan", kelas: "XII MM 3", dudi: "Studio Animasi Nusantara", guru: "Siti Rahmawati, S.Pd", waGuru: "081345678901", instruktur: "Maya Indah", waInstruktur: "082554321098" }
+        ];
+
+        let allStudents = [];
+        let filteredStudents = [];
+        let currentView = 'card';
+
+        // DOM Elements
+        const filterNama = document.getElementById('filterNama');
+        const filterKelas = document.getElementById('filterKelas');
+        const filterDudi = document.getElementById('filterDudi');
+        const filterGuru = document.getElementById('filterGuru');
+
+        async function fetchSpreadsheetData() {
+            const refreshIcon = document.getElementById('refreshIcon');
+            const syncStatus = document.getElementById('syncStatus');
+            
+            refreshIcon.classList.add('fa-spin');
+            syncStatus.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 font-medium";
+            syncStatus.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> Mengambil Data...`;
+
+            try {
+                const response = await fetch(GVIZ_URL);
+                if (!response.ok) throw new Error('Network response failed');
+                
+                const text = await response.text();
+                // Extract JSON payload from GViz response
+                const jsonMatch = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
+                
+                if (jsonMatch && jsonMatch[1]) {
+                    const parsedData = JSON.parse(jsonMatch[1]);
+                    const rows = parsedData.table.rows || [];
+                    
+                    allStudents = rows.map((row, index) => {
+                        const cells = row.c || [];
+                        return {
+                            no: cells[0]?.v || cells[0]?.f || (index + 1),
+                            nama: String(cells[1]?.v || cells[1]?.f || '').trim(),
+                            kelas: String(cells[2]?.v || cells[2]?.f || '').trim(),
+                            dudi: String(cells[3]?.v || cells[3]?.f || '').trim(),
+                            guru: String(cells[4]?.v || cells[4]?.f || '').trim(),
+                            waGuru: String(cells[5]?.v || cells[5]?.f || '').trim(),
+                            instruktur: String(cells[6]?.v || cells[6]?.f || '').trim(),
+                            waInstruktur: String(cells[7]?.v || cells[7]?.f || '').trim(),
+                        };
+                    }).filter(student => student.nama !== '' && student.nama !== 'NAMA SISWA');
+
+                    if (allStudents.length === 0) {
+                        throw new Error('Emply parsed data');
+                    }
+
+                    syncStatus.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium";
+                    syncStatus.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Tersinkron Spreadsheet`;
+                } else {
+                    throw new Error('Invalid JSON format');
+                }
+            } catch (error) {
+                console.warn('Gagal mengambil spreadsheet live, menggunakan fallback data:', error);
+                allStudents = FALLBACK_DATA;
+                syncStatus.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-medium";
+                syncStatus.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-400"></span> Data Demo (Lokal)`;
+            } finally {
+                refreshIcon.classList.remove('fa-spin');
+                populateDropdowns();
+                applyFilters();
+            }
+        }
+
+        function populateDropdowns() {
+            const extractUnique = (key) => [...new Set(allStudents.map(s => s[key]).filter(Boolean))].sort();
+
+            const kelasList = extractUnique('kelas');
+            const dudiList = extractUnique('dudi');
+            const guruList = extractUnique('guru');
+
+            fillSelect(filterKelas, kelasList, "Semua Kelas");
+            fillSelect(filterDudi, dudiList, "Semua DUDI");
+            fillSelect(filterGuru, guruList, "Semua Guru Pembimbing");
+        }
+
+        function fillSelect(selectElement, items, defaultText) {
+            const currentValue = selectElement.value;
+            selectElement.innerHTML = `<option value="">${defaultText}</option>`;
+            items.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item;
+                opt.textContent = item;
+                selectElement.appendChild(opt);
+            });
+            selectElement.value = currentValue;
+        }
+
+        // Helper WhatsApp Link
+        function getWaLink(number, message = '') {
+            if (!number) return '#';
+            let cleaned = String(number).replace(/\D/g, '');
+            if (cleaned.startsWith('0')) {
+                cleaned = '62' + cleaned.slice(1);
+            }
+            const encodedMsg = encodeURIComponent(message);
+            return `https://wa.me/${cleaned}${encodedMsg ? '?text=' + encodedMsg : ''}`;
+        }
+
+        function applyFilters() {
+            const valNama = filterNama.value.toLowerCase().trim();
+            const valKelas = filterKelas.value;
+            const valDudi = filterDudi.value;
+            const valGuru = filterGuru.value;
+
+            const isFiltered = valNama || valKelas || valDudi || valGuru;
+            document.getElementById('filterBadge').classList.toggle('hidden', !isFiltered);
+
+            filteredStudents = allStudents.filter(s => {
+                const matchNama = !valNama || s.nama.toLowerCase().includes(valNama);
+                const matchKelas = !valKelas || s.kelas === valKelas;
+                const matchDudi = !valDudi || s.dudi === valDudi;
+                const matchGuru = !valGuru || s.guru === valGuru;
+                return matchNama && matchKelas && matchDudi && matchGuru;
+            });
+
+            updateStats();
+            renderView();
+        }
+
+        function updateStats() {
+            document.getElementById('statTotalSiswa').textContent = allStudents.length;
+            document.getElementById('statTotalDudi').textContent = new Set(allStudents.map(s => s.dudi).filter(Boolean)).size;
+            document.getElementById('statTotalGuru').textContent = new Set(allStudents.map(s => s.guru).filter(Boolean)).size;
+            document.getElementById('statTotalKelas').textContent = new Set(allStudents.map(s => s.kelas).filter(Boolean)).size;
+
+            document.getElementById('resultCount').textContent = `Menampilkan ${filteredStudents.length} dari ${allStudents.length} siswa`;
+        }
+
+        function renderView() {
+            const cardContainer = document.getElementById('cardViewContainer');
+            const tableBody = document.getElementById('tableBody');
+            const emptyState = document.getElementById('emptyState');
+
+            if (filteredStudents.length === 0) {
+                cardContainer.classList.add('hidden');
+                document.getElementById('tableViewContainer').classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            if (currentView === 'card') {
+                cardContainer.classList.remove('hidden');
+                document.getElementById('tableViewContainer').classList.add('hidden');
+                
+                cardContainer.innerHTML = filteredStudents.map((s, idx) => {
+                    const waGuruUrl = getWaLink(s.waGuru, `Halo Bapak/Ibu ${s.guru}, saya ingin menanyakan mengenai PKL siswa ${s.nama}.`);
+                    const waInstrukturUrl = getWaLink(s.waInstruktur, `Halo Bapak/Ibu ${s.instruktur}, saya ingin konfirmasi PKL siswa ${s.nama}.`);
+
+                    return `
+                    <div class="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition border border-slate-200/80 flex flex-col justify-between space-y-4 relative overflow-hidden group">
+                        <div class="absolute top-0 left-0 w-1.5 h-full bg-brand-500 rounded-l-2xl"></div>
+                        
+                        <div>
+                            <!-- Header Info -->
+                            <div class="flex justify-between items-start gap-2 mb-2">
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 border border-brand-200/80">
+                                    ${s.kelas || 'N/A'}
+                                </span>
+                                <span class="text-xs font-medium text-slate-400">#${s.no || (idx + 1)}</span>
+                            </div>
+
+                            <h3 class="text-lg font-bold text-slate-800 leading-snug group-hover:text-brand-600 transition">
+                                ${s.nama}
+                            </h3>
+
+                            <!-- DUDI -->
+                            <div class="mt-3 flex items-start gap-2 text-xs text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                                <i class="fa-solid fa-building text-amber-500 mt-0.5"></i>
+                                <div>
+                                    <p class="font-medium text-slate-400 text-[10px] uppercase">DUDI / Industri</p>
+                                    <p class="font-semibold text-slate-700">${s.dudi || '-'}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Details & WhatsApp Contacts -->
+                        <div class="space-y-2 border-t border-slate-100 pt-3 text-xs">
+                            <!-- Guru Pembimbing -->
+                            <div class="flex items-center justify-between">
+                                <div class="truncate max-w-[170px]">
+                                    <p class="text-[10px] font-medium text-slate-400">Guru Pembimbing</p>
+                                    <p class="font-medium text-slate-700 truncate" title="${s.guru}">${s.guru || '-'}</p>
+                                </div>
+                                ${s.waGuru ? `
+                                    <a href="${waGuruUrl}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-medium text-[11px] transition">
+                                        <i class="fa-brands fa-whatsapp text-emerald-600"></i> WA Guru
+                                    </a>
+                                ` : '<span class="text-slate-300 text-[10px]">Tidak ada WA</span>'}
+                            </div>
+
+                            <!-- Instruktur DUDI -->
+                            <div class="flex items-center justify-between">
+                                <div class="truncate max-w-[170px]">
+                                    <p class="text-[10px] font-medium text-slate-400">Instruktur DUDI</p>
+                                    <p class="font-medium text-slate-700 truncate" title="${s.instruktur}">${s.instruktur || '-'}</p>
+                                </div>
+                                ${s.waInstruktur ? `
+                                    <a href="${waInstrukturUrl}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium text-[11px] transition">
+                                        <i class="fa-brands fa-whatsapp text-blue-600"></i> WA Instruktur
+                                    </a>
+                                ` : '<span class="text-slate-300 text-[10px]">Tidak ada WA</span>'}
+                            </div>
+                        </div>
+
+                        <!-- Action Button -->
+                        <button onclick="openModal(${idx})" class="w-full text-center py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs transition flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-circle-info"></i> Detail Lengkap
+                        </button>
+                    </div>
+                    `;
+                }).join('');
+            } else {
+                cardContainer.classList.add('hidden');
+                document.getElementById('tableViewContainer').classList.remove('hidden');
+
+                tableBody.innerHTML = filteredStudents.map((s, idx) => {
+                    const waGuruUrl = getWaLink(s.waGuru, `Halo Bapak/Ibu ${s.guru}, saya ingin menanyakan mengenai PKL siswa ${s.nama}.`);
+                    const waInstrukturUrl = getWaLink(s.waInstruktur, `Halo Bapak/Ibu ${s.instruktur}, saya ingin konfirmasi PKL siswa ${s.nama}.`);
+
+                    return `
+                    <tr class="hover:bg-slate-50 transition text-slate-700">
+                        <td class="py-3 px-4 text-center font-medium text-slate-400">${s.no || (idx + 1)}</td>
+                        <td class="py-3 px-4 font-semibold text-slate-800">${s.nama}</td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 border border-brand-200">
+                                ${s.kelas || '-'}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 font-medium">${s.dudi || '-'}</td>
+                        <td class="py-3 px-4">${s.guru || '-'}</td>
+                        <td class="py-3 px-4 text-center">
+                            ${s.waGuru ? `<a href="${waGuruUrl}" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-mono text-xs inline-flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded-md"><i class="fa-brands fa-whatsapp"></i> ${s.waGuru}</a>` : '-'}
+                        </td>
+                        <td class="py-3 px-4">${s.instruktur || '-'}</td>
+                        <td class="py-3 px-4 text-center">
+                            ${s.waInstruktur ? `<a href="${waInstrukturUrl}" target="_blank" class="text-blue-600 hover:text-blue-800 font-mono text-xs inline-flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-md"><i class="fa-brands fa-whatsapp"></i> ${s.waInstruktur}</a>` : '-'}
+                        </td>
+                    </tr>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Switch View Mode
+        function switchView(mode) {
+            currentView = mode;
+            const btnCard = document.getElementById('btnViewCard');
+            const btnTable = document.getElementById('btnViewTable');
+
+            if (mode === 'card') {
+                btnCard.className = "px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1.5 bg-white text-slate-800 shadow-sm";
+                btnTable.className = "px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
+            } else {
+                btnTable.className = "px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1.5 bg-white text-slate-800 shadow-sm";
+                btnCard.className = "px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
+            }
+            renderView();
+        }
+
+        // Reset Filters
+        function resetFilters() {
+            filterNama.value = '';
+            filterKelas.value = '';
+            filterDudi.value = '';
+            filterGuru.value = '';
+            applyFilters();
+        }
+
+        function openModal(filteredIndex) {
+            const s = filteredStudents[filteredIndex];
+            if (!s) return;
+
+            document.getElementById('modalNama').textContent = s.nama;
+            document.getElementById('modalKelas').textContent = s.kelas || 'N/A';
+            document.getElementById('modalDudi').textContent = s.dudi || '-';
+            
+            document.getElementById('modalGuru').textContent = s.guru || '-';
+            document.getElementById('modalWaGuruText').textContent = s.waGuru ? `Nomor WA: ${s.waGuru}` : 'Nomor WhatsApp tidak tersedia';
+            const btnWaGuru = document.getElementById('modalBtnWaGuru');
+            if (s.waGuru) {
+                btnWaGuru.href = getWaLink(s.waGuru, `Halo Bapak/Ibu ${s.guru}, saya ingin berkonsultasi mengenai PKL siswa ${s.nama}.`);
+                btnWaGuru.classList.remove('pointer-events-none', 'opacity-50');
+            } else {
+                btnWaGuru.href = '#';
+                btnWaGuru.classList.add('pointer-events-none', 'opacity-50');
+            }
+
+            document.getElementById('modalInstruktur').textContent = s.instruktur || '-';
+            document.getElementById('modalWaInstrukturText').textContent = s.waInstruktur ? `Nomor WA: ${s.waInstruktur}` : 'Nomor WhatsApp tidak tersedia';
+            const btnWaInstruktur = document.getElementById('modalBtnWaInstruktur');
+            if (s.waInstruktur) {
+                btnWaInstruktur.href = getWaLink(s.waInstruktur, `Halo Bapak/Ibu ${s.instruktur}, saya ingin bertanya mengenai siswa PKL ${s.nama}.`);
+                btnWaInstruktur.classList.remove('pointer-events-none', 'opacity-50');
+            } else {
+                btnWaInstruktur.href = '#';
+                btnWaInstruktur.classList.add('pointer-events-none', 'opacity-50');
+            }
+
+            const modal = document.getElementById('detailModal');
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+        }
+
+        // Event Listeners
+        filterNama.addEventListener('input', applyFilters);
+        filterKelas.addEventListener('change', applyFilters);
+        filterDudi.addEventListener('change', applyFilters);
+        filterGuru.addEventListener('change', applyFilters);
+
+        // Close Modal on backdrop click
+        document.getElementById('detailModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // Initialize on Load
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchSpreadsheetData();
+        });
+    </script>
+</body>
+</html>
