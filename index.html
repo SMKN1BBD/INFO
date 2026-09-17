@@ -61,18 +61,24 @@
                     <i class="fa-solid fa-graduation-cap text-xl text-white"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-lg leading-tight tracking-wide">MONITORING DATA PKL</h1>
-                    <p class="text-xs text-slate-400">Siswa, DUDI & Guru Pembimbing</p>
+                    <h1 class="font-bold text-xl leading-tight tracking-wide text-brand-400">DATA SISWA PKL</h1>
+                    <p class="text-xs text-slate-300 font-medium">SMK Negeri 1 Bebandem</p>
                 </div>
             </div>
 
-            <!-- Sync Status & Reload Button -->
-            <div class="flex items-center space-x-3 text-xs">
-                <span id="syncStatus" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
+            <!-- Action Button & Sync Status -->
+            <div class="flex flex-wrap items-center gap-3 text-xs">
+                <!-- Button Tambahkan No WA Siswa -->
+                <button onclick="openWaModal()" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-3.5 py-2 rounded-xl transition shadow-lg shadow-emerald-600/20 active:scale-95">
+                    <i class="fa-brands fa-whatsapp text-base"></i>
+                    <span>Tambahkan No WA Siswa</span>
+                </button>
+
+                <span id="syncStatus" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                     Tersinkron Spreadsheet
                 </span>
-                <button onclick="fetchSpreadsheetData()" title="Muat Ulang Data" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center justify-center border border-slate-700">
+                <button onclick="fetchSpreadsheetData()" title="Muat Ulang Data" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center justify-center border border-slate-700">
                     <i id="refreshIcon" class="fa-solid fa-rotate-right text-sm"></i>
                 </button>
             </div>
@@ -219,6 +225,7 @@
                             <th class="py-3 px-4 w-12 text-center">NO</th>
                             <th class="py-3 px-4">NAMA SISWA</th>
                             <th class="py-3 px-4">KELAS</th>
+                            <th class="py-3 px-4 text-center">WA SISWA</th>
                             <th class="py-3 px-4">DUDI</th>
                             <th class="py-3 px-4">GURU PEMBIMBING</th>
                             <th class="py-3 px-4 text-center">WA GURU</th>
@@ -262,7 +269,20 @@
                 </button>
             </div>
 
-            <div class="p-6 space-y-5 text-sm">
+            <div class="p-6 space-y-4 text-sm">
+                <!-- WA Siswa Contact -->
+                <div class="space-y-1">
+                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Kontak Siswa (Kolom I)</p>
+                    <div class="flex items-center justify-between bg-emerald-50/80 p-3 rounded-xl border border-emerald-200">
+                        <div>
+                            <p id="modalWaSiswaText" class="text-xs font-semibold font-mono text-emerald-800">Tidak ada nomor WA</p>
+                        </div>
+                        <a id="modalBtnWaSiswa" href="#" target="_blank" class="inline-flex items-center gap-1.5 text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg font-medium transition shadow-sm">
+                            <i class="fa-brands fa-whatsapp text-sm"></i> Chat Siswa
+                        </a>
+                    </div>
+                </div>
+
                 <!-- DUDI Section -->
                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-1">
                     <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Lokasi PKL / DUDI</p>
@@ -308,9 +328,71 @@
         </div>
     </div>
 
+    <!-- Modal Tambah / Update No WA Siswa -->
+    <div id="waSiswaModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden transform transition-all border border-slate-100">
+            <div class="bg-emerald-600 text-white p-5 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-white/20 rounded-xl">
+                        <i class="fa-brands fa-whatsapp text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold leading-tight">Tambahkan / Edit No WA Siswa</h3>
+                        <p class="text-xs text-emerald-100">Pilih kelas dan siswa untuk memasukkan No WA</p>
+                    </div>
+                </div>
+                <button onclick="closeWaModal()" class="text-emerald-100 hover:text-white p-1 rounded-lg transition">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <form id="formWaSiswa" onsubmit="handleSaveWaSiswa(event)" class="p-6 space-y-4 text-sm">
+                <!-- Dropdown Kelas -->
+                <div>
+                    <label for="modalWaKelas" class="block text-xs font-semibold text-slate-700 mb-1.5">1. Pilih Kelas (Drop Down)</label>
+                    <select id="modalWaKelas" onchange="onWaKelasChange()" required class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition cursor-pointer">
+                        <option value="">-- Pilih Kelas --</option>
+                    </select>
+                </div>
+
+                <!-- Dropdown Nama Siswa -->
+                <div>
+                    <label for="modalWaNama" class="block text-xs font-semibold text-slate-700 mb-1.5">2. Pilih Nama Siswa (Drop Down)</label>
+                    <select id="modalWaNama" onchange="onWaNamaChange()" required class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition cursor-pointer">
+                        <option value="">-- Pilih Nama Siswa --</option>
+                    </select>
+                </div>
+
+                <!-- Input No WA -->
+                <div>
+                    <label for="modalWaInput" class="block text-xs font-semibold text-slate-700 mb-1.5">3. Input No WA Siswa</label>
+                    <div class="relative">
+                        <input type="tel" id="modalWaInput" placeholder="Contoh: 081234567890" required
+                            class="w-full pl-9 pr-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition font-mono">
+                        <i class="fa-brands fa-whatsapp absolute left-3 top-3 text-emerald-600 text-base"></i>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1">Nomor WA terbaru akan tersimpan pada Kolom I spreadsheet &amp; data lokal.</p>
+                </div>
+
+                <!-- Status Toast Notification in Modal -->
+                <div id="waStatusMsg" class="hidden p-3 rounded-xl text-xs font-medium"></div>
+
+                <!-- Submit Button -->
+                <div class="pt-2 flex items-center justify-end gap-2">
+                    <button type="button" onclick="closeWaModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs rounded-xl transition">
+                        Batal
+                    </button>
+                    <button type="submit" id="btnSaveWa" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs rounded-xl transition shadow-md shadow-emerald-600/20 flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> Simpan No WA
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="bg-slate-900 text-slate-400 text-xs py-4 text-center border-t border-slate-800 mt-auto">
-        <p>&copy; 2026 Portal Data Siswa PKL & Guru Pembimbing. Terhubung dengan Google Sheets.</p>
+        <p>&copy; 2026 SMK Negeri 1 Bebandem - Portal Data Siswa PKL & Guru Pembimbing.</p>
     </footer>
 
     <script>
@@ -318,18 +400,41 @@
         const SPREADSHEET_ID = '1gjQcd_iHK_hz8-LfaWiy1LMpxV3vWS-kuiLa-W0tmy0';
         const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
 
-        // Default Sample Data Fallback (If CORS or Sheet network issue occurs)
+        // Optional Google Apps Script Web App URL for writing back to Google Sheets Column I
+        // Instructions: Deploy Google Apps Script on your Sheet to auto-write Column I if required.
+        const APPS_SCRIPT_URL = ''; 
+
+        // Default Sample Data Fallback
         const FALLBACK_DATA = [
-            { no: 1, nama: "Ahmad Rizky Pratama", kelas: "XII RPL 1", dudi: "PT. Teknologi Bangsa", guru: "Drs. Budi Santoso, M.Pd", waGuru: "081234567890", instruktur: "Eko Prasetyo, S.Kom", waInstruktur: "082198765432" },
-            { no: 2, nama: "Siti Nurhaliza", kelas: "XII RPL 1", dudi: "CV. Media Kreatif Jaya", guru: "Siti Rahmawati, S.Pd", waGuru: "081345678901", instruktur: "Dewi Sartika", waInstruktur: "082287654321" },
-            { no: 3, nama: "Bagas Saputra", kelas: "XII TKJ 2", dudi: "PT. Telkom Indonesia", guru: "Drs. Budi Santoso, M.Pd", waGuru: "081234567890", instruktur: "Hendra Wijaya", waInstruktur: "082376543210" },
-            { no: 4, nama: "Dewi Anggraini", kelas: "XII TKJ 2", dudi: "PT. Network Solusindo", guru: "Agus Setiawan, S.T", waGuru: "081456789012", instruktur: "Rian Hidayat", waInstruktur: "082465432109" },
-            { no: 5, nama: "Fajar Ramadan", kelas: "XII MM 3", dudi: "Studio Animasi Nusantara", guru: "Siti Rahmawati, S.Pd", waGuru: "081345678901", instruktur: "Maya Indah", waInstruktur: "082554321098" }
+            { no: 1, nama: "Ahmad Rizky Pratama", kelas: "XII RPL 1", dudi: "PT. Teknologi Bangsa", guru: "Drs. Budi Santoso, M.Pd", waGuru: "081234567890", instruktur: "Eko Prasetyo, S.Kom", waInstruktur: "082198765432", waSiswa: "081999111222" },
+            { no: 2, nama: "Siti Nurhaliza", kelas: "XII RPL 1", dudi: "CV. Media Kreatif Jaya", guru: "Siti Rahmawati, S.Pd", waGuru: "081345678901", instruktur: "Dewi Sartika", waInstruktur: "082287654321", waSiswa: "081999222333" },
+            { no: 3, nama: "Bagas Saputra", kelas: "XII TKJ 2", dudi: "PT. Telkom Indonesia", guru: "Drs. Budi Santoso, M.Pd", waGuru: "081234567890", instruktur: "Hendra Wijaya", waInstruktur: "082376543210", waSiswa: "" },
+            { no: 4, nama: "Dewi Anggraini", kelas: "XII TKJ 2", dudi: "PT. Network Solusindo", guru: "Agus Setiawan, S.T", waGuru: "081456789012", instruktur: "Rian Hidayat", waInstruktur: "082465432109", waSiswa: "" },
+            { no: 5, nama: "Fajar Ramadan", kelas: "XII MM 3", dudi: "Studio Animasi Nusantara", guru: "Siti Rahmawati, S.Pd", waGuru: "081345678901", instruktur: "Maya Indah", waInstruktur: "082554321098", waSiswa: "" }
         ];
 
         let allStudents = [];
         let filteredStudents = [];
         let currentView = 'card';
+
+        // Local storage helpers for WA Siswa (Column I override / sync)
+        function getSavedWaStorage() {
+            try {
+                return JSON.parse(localStorage.getItem('saved_wa_siswa_map') || '{}');
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function setSavedWaStorage(nama, waNumber) {
+            try {
+                const map = getSavedWaStorage();
+                map[nama] = waNumber;
+                localStorage.setItem('saved_wa_siswa_map', JSON.stringify(map));
+            } catch (e) {
+                console.warn('Gagal menyimpan ke LocalStorage', e);
+            }
+        }
 
         // DOM Elements
         const filterNama = document.getElementById('filterNama');
@@ -342,7 +447,7 @@
             const syncStatus = document.getElementById('syncStatus');
             
             refreshIcon.classList.add('fa-spin');
-            syncStatus.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 font-medium";
+            syncStatus.className = "inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 font-medium";
             syncStatus.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> Mengambil Data...`;
 
             try {
@@ -350,40 +455,49 @@
                 if (!response.ok) throw new Error('Network response failed');
                 
                 const text = await response.text();
-                // Extract JSON payload from GViz response
                 const jsonMatch = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
                 
                 if (jsonMatch && jsonMatch[1]) {
                     const parsedData = JSON.parse(jsonMatch[1]);
                     const rows = parsedData.table.rows || [];
+                    const localWaMap = getSavedWaStorage();
                     
                     allStudents = rows.map((row, index) => {
                         const cells = row.c || [];
+                        const namaSiswa = String(cells[1]?.v || cells[1]?.f || '').trim();
+                        // Column I is index 8 (NO WA SISWA)
+                        const rawWaSiswa = String(cells[8]?.v || cells[8]?.f || '').trim();
+                        // Always prioritize the latest saved number from localStorage if present
+                        const waSiswa = localWaMap[namaSiswa] || rawWaSiswa;
+
                         return {
                             no: cells[0]?.v || cells[0]?.f || (index + 1),
-                            nama: String(cells[1]?.v || cells[1]?.f || '').trim(),
+                            nama: namaSiswa,
                             kelas: String(cells[2]?.v || cells[2]?.f || '').trim(),
                             dudi: String(cells[3]?.v || cells[3]?.f || '').trim(),
                             guru: String(cells[4]?.v || cells[4]?.f || '').trim(),
                             waGuru: String(cells[5]?.v || cells[5]?.f || '').trim(),
                             instruktur: String(cells[6]?.v || cells[6]?.f || '').trim(),
                             waInstruktur: String(cells[7]?.v || cells[7]?.f || '').trim(),
+                            waSiswa: waSiswa
                         };
                     }).filter(student => student.nama !== '' && student.nama !== 'NAMA SISWA');
 
-                    if (allStudents.length === 0) {
-                        throw new Error('Emply parsed data');
-                    }
+                    if (allStudents.length === 0) throw new Error('Empty parsed data');
 
-                    syncStatus.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium";
+                    syncStatus.className = "inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium";
                     syncStatus.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Tersinkron Spreadsheet`;
                 } else {
                     throw new Error('Invalid JSON format');
                 }
             } catch (error) {
                 console.warn('Gagal mengambil spreadsheet live, menggunakan fallback data:', error);
-                allStudents = FALLBACK_DATA;
-                syncStatus.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-medium";
+                const localWaMap = getSavedWaStorage();
+                allStudents = FALLBACK_DATA.map(s => ({
+                    ...s,
+                    waSiswa: localWaMap[s.nama] || s.waSiswa
+                }));
+                syncStatus.className = "inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 font-medium";
                 syncStatus.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-400"></span> Data Demo (Lokal)`;
             } finally {
                 refreshIcon.classList.remove('fa-spin');
@@ -402,6 +516,9 @@
             fillSelect(filterKelas, kelasList, "Semua Kelas");
             fillSelect(filterDudi, dudiList, "Semua DUDI");
             fillSelect(filterGuru, guruList, "Semua Guru Pembimbing");
+
+            // Populate Modal WA Kelas Dropdown
+            fillSelect(document.getElementById('modalWaKelas'), kelasList, "-- Pilih Kelas --");
         }
 
         function fillSelect(selectElement, items, defaultText) {
@@ -416,7 +533,7 @@
             selectElement.value = currentValue;
         }
 
-        // Helper WhatsApp Link
+        // WhatsApp Link Generator
         function getWaLink(number, message = '') {
             if (!number) return '#';
             let cleaned = String(number).replace(/\D/g, '');
@@ -476,6 +593,7 @@
                 document.getElementById('tableViewContainer').classList.add('hidden');
                 
                 cardContainer.innerHTML = filteredStudents.map((s, idx) => {
+                    const waSiswaUrl = getWaLink(s.waSiswa, `Halo ${s.nama}, perihal informasi PKL...`);
                     const waGuruUrl = getWaLink(s.waGuru, `Halo Bapak/Ibu ${s.guru}, saya ingin menanyakan mengenai PKL siswa ${s.nama}.`);
                     const waInstrukturUrl = getWaLink(s.waInstruktur, `Halo Bapak/Ibu ${s.instruktur}, saya ingin konfirmasi PKL siswa ${s.nama}.`);
 
@@ -492,9 +610,16 @@
                                 <span class="text-xs font-medium text-slate-400">#${s.no || (idx + 1)}</span>
                             </div>
 
-                            <h3 class="text-lg font-bold text-slate-800 leading-snug group-hover:text-brand-600 transition">
-                                ${s.nama}
-                            </h3>
+                            <div class="flex items-start justify-between gap-2">
+                                <h3 class="text-lg font-bold text-slate-800 leading-snug group-hover:text-brand-600 transition">
+                                    ${s.nama}
+                                </h3>
+                                ${s.waSiswa ? `
+                                    <a href="${waSiswaUrl}" target="_blank" title="Chat WA Siswa (${s.waSiswa})" class="shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-medium text-[11px] transition border border-emerald-200">
+                                        <i class="fa-brands fa-whatsapp text-emerald-600 text-xs"></i> WA
+                                    </a>
+                                ` : ''}
+                            </div>
 
                             <!-- DUDI -->
                             <div class="mt-3 flex items-start gap-2 text-xs text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
@@ -547,6 +672,7 @@
                 document.getElementById('tableViewContainer').classList.remove('hidden');
 
                 tableBody.innerHTML = filteredStudents.map((s, idx) => {
+                    const waSiswaUrl = getWaLink(s.waSiswa, `Halo ${s.nama}, perihal PKL...`);
                     const waGuruUrl = getWaLink(s.waGuru, `Halo Bapak/Ibu ${s.guru}, saya ingin menanyakan mengenai PKL siswa ${s.nama}.`);
                     const waInstrukturUrl = getWaLink(s.waInstruktur, `Halo Bapak/Ibu ${s.instruktur}, saya ingin konfirmasi PKL siswa ${s.nama}.`);
 
@@ -558,6 +684,9 @@
                             <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 border border-brand-200">
                                 ${s.kelas || '-'}
                             </span>
+                        </td>
+                        <td class="py-3 px-4 text-center">
+                            ${s.waSiswa ? `<a href="${waSiswaUrl}" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-mono text-xs inline-flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-200"><i class="fa-brands fa-whatsapp"></i> ${s.waSiswa}</a>` : '<span class="text-slate-300 text-xs">-</span>'}
                         </td>
                         <td class="py-3 px-4 font-medium">${s.dudi || '-'}</td>
                         <td class="py-3 px-4">${s.guru || '-'}</td>
@@ -572,6 +701,105 @@
                     `;
                 }).join('');
             }
+        }
+
+        // Modal "Tambah / Edit No WA Siswa" Dynamic Dropdown handlers
+        function openWaModal() {
+            document.getElementById('waSiswaModal').classList.remove('hidden');
+            document.getElementById('waStatusMsg').classList.add('hidden');
+            document.getElementById('formWaSiswa').reset();
+            onWaKelasChange();
+        }
+
+        function closeWaModal() {
+            document.getElementById('waSiswaModal').classList.add('hidden');
+        }
+
+        function onWaKelasChange() {
+            const selectedKelas = document.getElementById('modalWaKelas').value;
+            const selectWaNama = document.getElementById('modalWaNama');
+            
+            selectWaNama.innerHTML = '<option value="">-- Pilih Nama Siswa --</option>';
+
+            const studentsInClass = selectedKelas 
+                ? allStudents.filter(s => s.kelas === selectedKelas)
+                : allStudents;
+
+            studentsInClass.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.nama;
+                opt.textContent = `${s.nama} (${s.kelas})`;
+                selectWaNama.appendChild(opt);
+            });
+
+            document.getElementById('modalWaInput').value = '';
+        }
+
+        function onWaNamaChange() {
+            const selectedNama = document.getElementById('modalWaNama').value;
+            const student = allStudents.find(s => s.nama === selectedNama);
+            if (student && student.waSiswa) {
+                document.getElementById('modalWaInput').value = student.waSiswa;
+            } else {
+                document.getElementById('modalWaInput').value = '';
+            }
+        }
+
+        async function handleSaveWaSiswa(e) {
+            e.preventDefault();
+            const selectedKelas = document.getElementById('modalWaKelas').value;
+            const selectedNama = document.getElementById('modalWaNama').value;
+            const waNumber = document.getElementById('modalWaInput').value.trim();
+            const statusMsg = document.getElementById('waStatusMsg');
+            const btnSave = document.getElementById('btnSaveWa');
+
+            if (!selectedNama || !waNumber) {
+                statusMsg.className = "p-3 rounded-xl text-xs font-medium bg-red-100 text-red-700 block";
+                statusMsg.textContent = "Harap isi kelas, nama siswa, dan nomor WA dengan lengkap.";
+                return;
+            }
+
+            btnSave.disabled = true;
+            btnSave.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...`;
+
+            // 1. Update in-memory data
+            const student = allStudents.find(s => s.nama === selectedNama);
+            if (student) {
+                student.waSiswa = waNumber;
+            }
+
+            // 2. Save to local storage for persistence across reloads
+            setSavedWaStorage(selectedNama, waNumber);
+
+            // 3. Attempt POST/GET update to Google Apps Script if endpoint configured
+            let syncSuccess = false;
+            if (APPS_SCRIPT_URL) {
+                try {
+                    await fetch(APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ nama: selectedNama, kelas: selectedKelas, waSiswa: waNumber })
+                    });
+                    syncSuccess = true;
+                } catch (err) {
+                    console.warn('Google Apps Script request error:', err);
+                }
+            }
+
+            setTimeout(() => {
+                btnSave.disabled = false;
+                btnSave.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan No WA`;
+                
+                statusMsg.className = "p-3 rounded-xl text-xs font-medium bg-emerald-100 text-emerald-800 block";
+                statusMsg.innerHTML = `<i class="fa-solid fa-circle-check"></i> No WA untuk <b>${selectedNama}</b> berhasil disimpan (${waNumber})!`;
+
+                applyFilters();
+
+                setTimeout(() => {
+                    closeWaModal();
+                }, 1200);
+            }, 400);
         }
 
         // Switch View Mode
@@ -607,6 +835,18 @@
             document.getElementById('modalKelas').textContent = s.kelas || 'N/A';
             document.getElementById('modalDudi').textContent = s.dudi || '-';
             
+            // WA Siswa Detail
+            document.getElementById('modalWaSiswaText').textContent = s.waSiswa ? `Nomor WA: ${s.waSiswa}` : 'Nomor WA Siswa belum diisi';
+            const btnWaSiswa = document.getElementById('modalBtnWaSiswa');
+            if (s.waSiswa) {
+                btnWaSiswa.href = getWaLink(s.waSiswa, `Halo ${s.nama}, perihal informasi kegiatan PKL...`);
+                btnWaSiswa.classList.remove('pointer-events-none', 'opacity-50');
+            } else {
+                btnWaSiswa.href = '#';
+                btnWaSiswa.classList.add('pointer-events-none', 'opacity-50');
+            }
+
+            // Guru Pembimbing
             document.getElementById('modalGuru').textContent = s.guru || '-';
             document.getElementById('modalWaGuruText').textContent = s.waGuru ? `Nomor WA: ${s.waGuru}` : 'Nomor WhatsApp tidak tersedia';
             const btnWaGuru = document.getElementById('modalBtnWaGuru');
@@ -618,6 +858,7 @@
                 btnWaGuru.classList.add('pointer-events-none', 'opacity-50');
             }
 
+            // Instruktur DUDI
             document.getElementById('modalInstruktur').textContent = s.instruktur || '-';
             document.getElementById('modalWaInstrukturText').textContent = s.waInstruktur ? `Nomor WA: ${s.waInstruktur}` : 'Nomor WhatsApp tidak tersedia';
             const btnWaInstruktur = document.getElementById('modalBtnWaInstruktur');
@@ -643,9 +884,12 @@
         filterDudi.addEventListener('change', applyFilters);
         filterGuru.addEventListener('change', applyFilters);
 
-        // Close Modal on backdrop click
+        // Close Modals on backdrop click
         document.getElementById('detailModal').addEventListener('click', function(e) {
             if (e.target === this) closeModal();
+        });
+        document.getElementById('waSiswaModal').addEventListener('click', function(e) {
+            if (e.target === this) closeWaModal();
         });
 
         // Initialize on Load
