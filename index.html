@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Data Siswa PKL & Guru Pembimbing</title>
-    <!-- Tailwind CSS CDN -->
+    <title>DATA SISWA PKL - SMK Negeri 1 Bebandem</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome Icons -->
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -25,7 +25,6 @@
                             600: '#16a34a',
                             700: '#15803d',
                             800: '#166534',
-                            900: '#14532d',
                         }
                     }
                 }
@@ -33,54 +32,59 @@
         }
     </script>
     <style>
+        /* Custom scrollbar styling */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         .glass-card {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-        }
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
         }
     </style>
 </head>
-<body class="h-full text-slate-800 font-sans antialiased bg-slate-50 flex flex-col">
+<body class="h-full text-slate-800 antialiased bg-slate-50 flex flex-col font-sans selection:bg-brand-500 selection:text-white">
 
-    <!-- Top Navigation Bar -->
-    <header class="bg-slate-900 text-white sticky top-0 z-30 shadow-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap justify-between items-center gap-4">
-            <div class="flex items-center space-x-3">
-                <div class="bg-brand-500 p-2.5 rounded-xl shadow-lg shadow-brand-500/30">
-                    <i class="fa-solid fa-graduation-cap text-xl text-white"></i>
+    <!-- Header Section -->
+    <header class="bg-gradient-to-r from-emerald-800 via-teal-800 to-slate-900 text-white shadow-lg sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                
+                <!-- School & App Title -->
+                <div class="flex items-center space-x-3.5">
+                    <div class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 shadow-inner shrink-0">
+                        <i class="fa-solid fa-graduation-cap text-2xl text-emerald-300"></i>
+                    </div>
+                    <div>
+                        <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-emerald-500/30 text-emerald-200 border border-emerald-400/30 mb-0.5">
+                            Sistem Informasi Praktik Kerja Lapangan
+                        </span>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
+                            DATA SISWA PKL
+                        </h1>
+                        <p class="text-xs sm:text-sm font-medium text-emerald-100/80 flex items-center gap-1.5">
+                            <i class="fa-solid fa-school text-emerald-300"></i>
+                            SMK Negeri 1 Bebandem
+                        </p>
+                    </div>
                 </div>
-                <div>
-                    <h1 class="font-bold text-xl leading-tight tracking-wide text-brand-400">DATA SISWA PKL</h1>
-                    <p class="text-xs text-slate-300 font-medium">SMK Negeri 1 Bebandem</p>
+
+                <!-- Action Header Buttons -->
+                <div class="flex items-center gap-2.5 flex-wrap">
+                    <button onclick="openWaModal()" 
+                        class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-md hover:shadow-emerald-500/25 transition-all duration-200 transform active:scale-95 border border-emerald-400/30">
+                        <i class="fa-brands fa-whatsapp text-lg"></i>
+                        <span>Tambahkan No WA Siswa</span>
+                    </button>
+
+                    <button onclick="fetchDataFromSheet(true)" id="btnRefresh" 
+                        class="inline-flex items-center gap-2 px-3.5 py-2.5 bg-white/10 hover:bg-white/20 active:bg-white/30 text-white font-medium text-xs sm:text-sm rounded-xl border border-white/15 transition duration-200"
+                        title="Reload Data Spreadsheet">
+                        <i class="fa-solid fa-rotate text-xs" id="refreshIcon"></i>
+                        <span class="hidden sm:inline">Refresh</span>
+                    </button>
                 </div>
-            </div>
 
-            <!-- Action Button & Sync Status -->
-            <div class="flex flex-wrap items-center gap-3 text-xs">
-                <!-- Button Tambahkan No WA Siswa -->
-                <button onclick="openWaModal()" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-3.5 py-2 rounded-xl transition shadow-lg shadow-emerald-600/20 active:scale-95">
-                    <i class="fa-brands fa-whatsapp text-base"></i>
-                    <span>Tambahkan No WA Siswa</span>
-                </button>
-
-                <span id="syncStatus" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    Tersinkron Spreadsheet
-                </span>
-                <button onclick="fetchSpreadsheetData()" title="Muat Ulang Data" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center justify-center border border-slate-700">
-                    <i id="refreshIcon" class="fa-solid fa-rotate-right text-sm"></i>
-                </button>
             </div>
         </div>
     </header>
@@ -88,277 +92,214 @@
     <!-- Main Content Area -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-        <!-- Stat Cards Summary -->
+        <!-- Notification Banner / Alert Box -->
+        <div id="statusAlert" class="hidden rounded-2xl p-4 border transition-all duration-300 shadow-sm text-sm">
+            <div class="flex items-start gap-3">
+                <i id="alertIcon" class="fa-solid fa-circle-info text-lg mt-0.5 shrink-0"></i>
+                <div class="flex-1">
+                    <h3 id="alertTitle" class="font-bold"></h3>
+                    <p id="alertDesc" class="text-xs sm:text-sm mt-0.5 opacity-90"></p>
+                </div>
+                <button onclick="dismissAlert()" class="text-slate-400 hover:text-slate-600 p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Key Statistics Dashboard -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-            <div class="glass-card rounded-2xl p-4 flex items-center space-x-3 shadow-sm border border-slate-200/80">
-                <div class="p-3 bg-blue-50 text-blue-600 rounded-xl">
-                    <i class="fa-solid fa-user-graduate text-xl sm:text-2xl"></i>
-                </div>
+            <!-- Card 1: Total Siswa -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-medium text-slate-500">Total Siswa</p>
-                    <h3 id="statTotalSiswa" class="text-xl sm:text-2xl font-bold text-slate-800">0</h3>
+                    <p class="text-[11px] font-bold tracking-wider uppercase text-slate-400">Total Siswa</p>
+                    <h3 class="text-xl sm:text-2xl font-black text-slate-800 mt-0.5" id="statTotalSiswa">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                    <i class="fa-solid fa-users"></i>
                 </div>
             </div>
 
-            <div class="glass-card rounded-2xl p-4 flex items-center space-x-3 shadow-sm border border-slate-200/80">
-                <div class="p-3 bg-amber-50 text-amber-600 rounded-xl">
-                    <i class="fa-solid fa-building text-xl sm:text-2xl"></i>
-                </div>
+            <!-- Card 2: Total DUDI -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-medium text-slate-500">Total DUDI</p>
-                    <h3 id="statTotalDudi" class="text-xl sm:text-2xl font-bold text-slate-800">0</h3>
+                    <p class="text-[11px] font-bold tracking-wider uppercase text-slate-400">Total DUDI</p>
+                    <h3 class="text-xl sm:text-2xl font-black text-slate-800 mt-0.5" id="statTotalDudi">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                    <i class="fa-solid fa-building"></i>
                 </div>
             </div>
 
-            <div class="glass-card rounded-2xl p-4 flex items-center space-x-3 shadow-sm border border-slate-200/80">
-                <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
-                    <i class="fa-solid fa-user-tie text-xl sm:text-2xl"></i>
-                </div>
+            <!-- Card 3: Guru Pembimbing -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-medium text-slate-500">Guru Pembimbing</p>
-                    <h3 id="statTotalGuru" class="text-xl sm:text-2xl font-bold text-slate-800">0</h3>
+                    <p class="text-[11px] font-bold tracking-wider uppercase text-slate-400">Guru Pembimbing</p>
+                    <h3 class="text-xl sm:text-2xl font-black text-slate-800 mt-0.5" id="statTotalGuru">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+                    <i class="fa-solid fa-user-tie"></i>
                 </div>
             </div>
 
-            <div class="glass-card rounded-2xl p-4 flex items-center space-x-3 shadow-sm border border-slate-200/80">
-                <div class="p-3 bg-purple-50 text-purple-600 rounded-xl">
-                    <i class="fa-solid fa-school text-xl sm:text-2xl"></i>
-                </div>
+            <!-- Card 4: Kelas -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-medium text-slate-500">Total Kelas</p>
-                    <h3 id="statTotalKelas" class="text-xl sm:text-2xl font-bold text-slate-800">0</h3>
+                    <p class="text-[11px] font-bold tracking-wider uppercase text-slate-400">Jumlah Kelas</p>
+                    <h3 class="text-xl sm:text-2xl font-black text-slate-800 mt-0.5" id="statTotalKelas">0</h3>
                 </div>
-            </div>
-        </div>
-
-        <!-- Filter & Search Section -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                <div class="flex items-center space-x-2 text-slate-800">
-                    <i class="fa-solid fa-filter text-brand-600"></i>
-                    <h2 class="font-semibold text-base">Filter & Pencarian Data</h2>
-                </div>
-                <button onclick="resetFilters()" class="self-start sm:self-auto text-xs font-medium text-slate-500 hover:text-brand-600 flex items-center gap-1 transition py-1 px-2.5 rounded-lg hover:bg-slate-100">
-                    <i class="fa-solid fa-rotate-left"></i> Reset Filter
-                </button>
-            </div>
-
-            <!-- Input Fields Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Search Nama Siswa -->
-                <div>
-                    <label for="filterNama" class="block text-xs font-medium text-slate-600 mb-1.5">Nama Siswa</label>
-                    <div class="relative">
-                        <input type="text" id="filterNama" placeholder="Ketik nama siswa..." 
-                            class="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-sm"></i>
-                    </div>
-                </div>
-
-                <!-- Dropdown Kelas -->
-                <div>
-                    <label for="filterKelas" class="block text-xs font-medium text-slate-600 mb-1.5">Kelas</label>
-                    <div class="relative">
-                        <select id="filterKelas" class="w-full pl-9 pr-8 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition cursor-pointer">
-                            <option value="">Semua Kelas</option>
-                        </select>
-                        <i class="fa-solid fa-school absolute left-3 top-2.5 text-slate-400 text-sm"></i>
-                        <i class="fa-solid fa-chevron-down absolute right-3 top-3 text-slate-400 text-xs pointer-events-none"></i>
-                    </div>
-                </div>
-
-                <!-- Dropdown DUDI -->
-                <div>
-                    <label for="filterDudi" class="block text-xs font-medium text-slate-600 mb-1.5">DUDI (Perusahaan)</label>
-                    <div class="relative">
-                        <select id="filterDudi" class="w-full pl-9 pr-8 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition cursor-pointer">
-                            <option value="">Semua DUDI</option>
-                        </select>
-                        <i class="fa-solid fa-building-user absolute left-3 top-2.5 text-slate-400 text-sm"></i>
-                        <i class="fa-solid fa-chevron-down absolute right-3 top-3 text-slate-400 text-xs pointer-events-none"></i>
-                    </div>
-                </div>
-
-                <!-- Dropdown Guru Pembimbing -->
-                <div>
-                    <label for="filterGuru" class="block text-xs font-medium text-slate-600 mb-1.5">Guru Pembimbing</label>
-                    <div class="relative">
-                        <select id="filterGuru" class="w-full pl-9 pr-8 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition cursor-pointer">
-                            <option value="">Semua Guru Pembimbing</option>
-                        </select>
-                        <i class="fa-solid fa-user-check absolute left-3 top-2.5 text-slate-400 text-sm"></i>
-                        <i class="fa-solid fa-chevron-down absolute right-3 top-3 text-slate-400 text-xs pointer-events-none"></i>
-                    </div>
+                <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+                    <i class="fa-solid fa-door-open"></i>
                 </div>
             </div>
         </div>
 
-        <!-- Results Header Bar -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div class="flex items-center space-x-2">
-                <span id="resultCount" class="text-sm font-semibold text-slate-700">Menampilkan 0 data</span>
-                <span id="filterBadge" class="hidden text-xs bg-brand-100 text-brand-800 font-medium px-2 py-0.5 rounded-full">Filtered</span>
+        <!-- Interactive Filter & Search Controls -->
+        <section class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-filter text-emerald-600"></i>
+                    <h2 class="font-bold text-slate-800 text-sm sm:text-base">Filter Data Siswa &amp; Pembimbing</h2>
+                </div>
+                <div class="flex items-center gap-2 self-end sm:self-auto">
+                    <button onclick="resetFilters()" class="text-xs font-semibold text-slate-500 hover:text-emerald-600 flex items-center gap-1 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 transition">
+                        <i class="fa-solid fa-arrows-rotate text-[10px]"></i>
+                        <span>Reset Filter</span>
+                    </button>
+                    <!-- View Toggle Button -->
+                    <div class="bg-slate-100 p-1 rounded-xl flex items-center border border-slate-200">
+                        <button onclick="switchView('grid')" id="btnViewGrid" class="px-2.5 py-1 rounded-lg text-xs font-bold transition bg-white text-emerald-700 shadow-sm">
+                            <i class="fa-solid fa-grip"></i> Card
+                        </button>
+                        <button onclick="switchView('table')" id="btnViewTable" class="px-2.5 py-1 rounded-lg text-xs font-bold transition text-slate-500 hover:text-slate-800">
+                            <i class="fa-solid fa-list"></i> Tabel
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <!-- View Toggle -->
-            <div class="flex items-center space-x-1 bg-slate-200/70 p-1 rounded-xl self-start sm:self-auto text-xs">
-                <button id="btnViewCard" onclick="switchView('card')" class="px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1.5 bg-white text-slate-800 shadow-sm">
-                    <i class="fa-solid fa-grip"></i> Kartu
-                </button>
-                <button id="btnViewTable" onclick="switchView('table')" class="px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
-                    <i class="fa-solid fa-list-ul"></i> Tabel
-                </button>
+            <!-- 4 Column Filter Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                
+                <!-- 1. Input Teks / Dropdown Nama Siswa -->
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold text-slate-600">1. Nama Siswa</label>
+                    <div class="relative">
+                        <input type="text" id="filterNama" oninput="applyFilters()" placeholder="Cari nama siswa..." 
+                            class="w-full pl-9 pr-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                    </div>
+                </div>
+
+                <!-- 2. Drop Down Kelas -->
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold text-slate-600">2. Kelas</label>
+                    <select id="filterKelas" onchange="applyFilters()" 
+                        class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition text-slate-700">
+                        <option value="">-- Semua Kelas --</option>
+                    </select>
+                </div>
+
+                <!-- 3. Drop Down DUDI -->
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold text-slate-600">3. DUDI (Industri)</label>
+                    <select id="filterDudi" onchange="applyFilters()" 
+                        class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition text-slate-700">
+                        <option value="">-- Semua DUDI --</option>
+                    </select>
+                </div>
+
+                <!-- 4. Drop Down Guru Pembimbing -->
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold text-slate-600">4. Guru Pembimbing</label>
+                    <select id="filterGuru" onchange="applyFilters()" 
+                        class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition text-slate-700">
+                        <option value="">-- Semua Guru Pembimbing --</option>
+                    </select>
+                </div>
+
             </div>
+        </section>
+
+        <!-- Results Container (Grid View) -->
+        <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Dynamic Cards inserted via JS -->
         </div>
 
-        <!-- Cards Container -->
-        <div id="cardViewContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            <!-- Dynamic Cards inserted here -->
-        </div>
-
-        <!-- Table View Container (Hidden by default) -->
-        <div id="tableViewContainer" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="overflow-x-auto custom-scrollbar">
-                <table class="w-full text-left border-collapse text-sm">
+        <!-- Results Container (Table View) -->
+        <div id="tableView" class="hidden bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs sm:text-sm border-collapse">
                     <thead>
-                        <tr class="bg-slate-100/80 text-slate-600 font-semibold border-b border-slate-200">
-                            <th class="py-3 px-4 w-12 text-center">NO</th>
-                            <th class="py-3 px-4">NAMA SISWA</th>
-                            <th class="py-3 px-4">KELAS</th>
-                            <th class="py-3 px-4 text-center">WA SISWA</th>
+                        <tr class="bg-slate-100/80 text-slate-700 border-b border-slate-200 font-semibold uppercase tracking-wider text-[11px]">
+                            <th class="py-3 px-4">No</th>
+                            <th class="py-3 px-4">Nama Siswa</th>
+                            <th class="py-3 px-4">Kelas</th>
                             <th class="py-3 px-4">DUDI</th>
-                            <th class="py-3 px-4">GURU PEMBIMBING</th>
-                            <th class="py-3 px-4 text-center">WA GURU</th>
-                            <th class="py-3 px-4">INSTRUKTUR DUDI</th>
-                            <th class="py-3 px-4 text-center">WA INSTRUKTUR</th>
+                            <th class="py-3 px-4">Guru Pembimbing</th>
+                            <th class="py-3 px-4">Instruktur DUDI</th>
+                            <th class="py-3 px-4 text-center">Aksi / Detail</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody" class="divide-y divide-slate-100">
-                        <!-- Dynamic Rows inserted here -->
+                    <tbody id="tableBody" class="divide-y divide-slate-100 text-slate-600">
+                        <!-- Dynamic Rows inserted via JS -->
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Empty State Alert -->
-        <div id="emptyState" class="hidden bg-white rounded-2xl p-10 text-center space-y-3 border border-slate-200 shadow-sm">
+        <!-- Empty / Loading State Displays -->
+        <div id="loadingSpinner" class="py-16 text-center space-y-3">
+            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-emerald-500 border-t-transparent"></div>
+            <p class="text-sm font-medium text-slate-500">Memuat data dari Google Spreadsheet...</p>
+        </div>
+
+        <div id="emptyState" class="hidden py-16 text-center space-y-3 bg-white rounded-2xl border border-slate-200">
             <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto text-2xl">
                 <i class="fa-solid fa-folder-open"></i>
             </div>
-            <h3 class="font-semibold text-slate-700 text-base">Tidak ada data ditemukan</h3>
-            <p class="text-xs text-slate-500 max-w-sm mx-auto">Coba sesuaikan kata kunci atau atur ulang filter pencarian Anda.</p>
-            <button onclick="resetFilters()" class="inline-flex items-center gap-2 text-xs bg-brand-600 hover:bg-brand-700 text-white font-medium px-4 py-2 rounded-xl transition shadow-md shadow-brand-500/20">
-                <i class="fa-solid fa-rotate-left"></i> Reset Filter
+            <h3 class="text-base font-bold text-slate-700">Tidak ada data ditemukan</h3>
+            <p class="text-xs sm:text-sm text-slate-400 max-w-sm mx-auto">Coba ubah kata kunci pencarian atau sesuaikan kombinasi filter di atas.</p>
+            <button onclick="resetFilters()" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 font-semibold text-xs rounded-xl hover:bg-emerald-100 transition">
+                <i class="fa-solid fa-arrows-rotate"></i> Reset Filter
             </button>
         </div>
 
     </main>
 
-    <!-- Detail Modal -->
-    <div id="detailModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity">
-        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden transform transition-all border border-slate-100">
-            <div class="bg-slate-900 text-white p-5 flex justify-between items-start">
-                <div>
-                    <span id="modalKelas" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30">
-                        -
-                    </span>
-                    <h3 id="modalNama" class="text-xl font-bold mt-2 leading-snug">-</h3>
-                </div>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-white p-1 rounded-lg transition">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
-            </div>
-
-            <div class="p-6 space-y-4 text-sm">
-                <!-- WA Siswa Contact -->
-                <div class="space-y-1">
-                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Kontak Siswa (Kolom I)</p>
-                    <div class="flex items-center justify-between bg-emerald-50/80 p-3 rounded-xl border border-emerald-200">
-                        <div>
-                            <p id="modalWaSiswaText" class="text-xs font-semibold font-mono text-emerald-800">Tidak ada nomor WA</p>
-                        </div>
-                        <a id="modalBtnWaSiswa" href="#" target="_blank" class="inline-flex items-center gap-1.5 text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg font-medium transition shadow-sm">
-                            <i class="fa-brands fa-whatsapp text-sm"></i> Chat Siswa
-                        </a>
-                    </div>
-                </div>
-
-                <!-- DUDI Section -->
-                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-1">
-                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Lokasi PKL / DUDI</p>
-                    <p id="modalDudi" class="font-semibold text-slate-800 text-base flex items-center gap-2">
-                        <i class="fa-solid fa-building text-amber-500"></i> -
-                    </p>
-                </div>
-
-                <!-- Guru Pembimbing -->
-                <div class="space-y-2">
-                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Guru Pembimbing Sekolah</p>
-                    <div class="flex items-center justify-between bg-emerald-50/60 p-3.5 rounded-xl border border-emerald-100">
-                        <div>
-                            <p id="modalGuru" class="font-semibold text-slate-800">-</p>
-                            <p id="modalWaGuruText" class="text-xs text-slate-500 font-mono mt-0.5">-</p>
-                        </div>
-                        <a id="modalBtnWaGuru" href="#" target="_blank" class="inline-flex items-center gap-1.5 text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg font-medium transition shadow-sm">
-                            <i class="fa-brands fa-whatsapp text-sm"></i> Chat WA
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Instruktur DUDI -->
-                <div class="space-y-2">
-                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Instruktur DUDI / Industri</p>
-                    <div class="flex items-center justify-between bg-blue-50/60 p-3.5 rounded-xl border border-blue-100">
-                        <div>
-                            <p id="modalInstruktur" class="font-semibold text-slate-800">-</p>
-                            <p id="modalWaInstrukturText" class="text-xs text-slate-500 font-mono mt-0.5">-</p>
-                        </div>
-                        <a id="modalBtnWaInstruktur" href="#" target="_blank" class="inline-flex items-center gap-1.5 text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-medium transition shadow-sm">
-                            <i class="fa-brands fa-whatsapp text-sm"></i> Chat WA
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-slate-50 px-6 py-3.5 border-t border-slate-100 flex justify-end">
-                <button onclick="closeModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium text-xs rounded-xl transition">
-                    Tutup
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Tambah / Update No WA Siswa -->
-    <div id="waSiswaModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity">
-        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden transform transition-all border border-slate-100">
-            <div class="bg-emerald-600 text-white p-5 flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="p-2 bg-white/20 rounded-xl">
-                        <i class="fa-brands fa-whatsapp text-2xl"></i>
+    <!-- MODAL: Tambah/Update No WA Siswa -->
+    <div id="waModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden transition-opacity duration-200">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 transform transition-all scale-100 space-y-5">
+            
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">
+                        <i class="fa-brands fa-whatsapp text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="text-base font-bold leading-tight">Tambahkan / Edit No WA Siswa</h3>
-                        <p class="text-xs text-emerald-100">Pilih kelas dan siswa untuk memasukkan No WA</p>
+                        <h3 class="font-bold text-slate-800 text-base">Input / Update No WA Siswa</h3>
+                        <p class="text-[11px] text-slate-400">Pilih Kelas &amp; Nama Siswa untuk simpan nomor</p>
                     </div>
                 </div>
-                <button onclick="closeWaModal()" class="text-emerald-100 hover:text-white p-1 rounded-lg transition">
-                    <i class="fa-solid fa-xmark text-xl"></i>
+                <button onclick="closeWaModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <form id="formWaSiswa" onsubmit="handleSaveWaSiswa(event)" class="p-6 space-y-4 text-sm">
-                <!-- Dropdown Kelas -->
+            <form id="waForm" onsubmit="handleSaveWaSiswa(event)" class="space-y-4">
+                <!-- Dropdown Pilih Kelas -->
                 <div>
-                    <label for="modalWaKelas" class="block text-xs font-semibold text-slate-700 mb-1.5">1. Pilih Kelas (Drop Down)</label>
-                    <select id="modalWaKelas" onchange="onWaKelasChange()" required class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition cursor-pointer">
+                    <label for="modalWaKelas" class="block text-xs font-semibold text-slate-700 mb-1.5">1. Pilih Kelas Siswa</label>
+                    <select id="modalWaKelas" onchange="onModalKelasChange()" required
+                        class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition text-slate-700">
                         <option value="">-- Pilih Kelas --</option>
                     </select>
                 </div>
 
-                <!-- Dropdown Nama Siswa -->
+                <!-- Dropdown Pilih Nama Siswa -->
                 <div>
-                    <label for="modalWaNama" class="block text-xs font-semibold text-slate-700 mb-1.5">2. Pilih Nama Siswa (Drop Down)</label>
-                    <select id="modalWaNama" onchange="onWaNamaChange()" required class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition cursor-pointer">
+                    <label for="modalWaNama" class="block text-xs font-semibold text-slate-700 mb-1.5">2. Pilih Nama Siswa</label>
+                    <select id="modalWaNama" onchange="onModalNamaChange()" required disabled
+                        class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition text-slate-700 disabled:opacity-50 disabled:bg-slate-100">
                         <option value="">-- Pilih Nama Siswa --</option>
                     </select>
                 </div>
@@ -371,377 +312,534 @@
                             class="w-full pl-9 pr-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition font-mono">
                         <i class="fa-brands fa-whatsapp absolute left-3 top-3 text-emerald-600 text-base"></i>
                     </div>
-                    <p class="text-[11px] text-slate-400 mt-1">Nomor WA terbaru akan tersimpan pada Kolom I spreadsheet &amp; data lokal.</p>
+                    <p class="text-[11px] text-slate-400 mt-1">
+                        Nomor tersimpan lokal di browser &amp; otomatis dikirim ke Google Sheet (Kolom I) jika Apps Script aktif.
+                    </p>
                 </div>
 
-                <!-- Status Toast Notification in Modal -->
+                <!-- Status Msg inside Modal -->
                 <div id="waStatusMsg" class="hidden p-3 rounded-xl text-xs font-medium"></div>
 
-                <!-- Submit Button -->
-                <div class="pt-2 flex items-center justify-end gap-2">
-                    <button type="button" onclick="closeWaModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs rounded-xl transition">
+                <!-- Action Buttons -->
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeWaModal()" class="px-4 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">
                         Batal
                     </button>
-                    <button type="submit" id="btnSaveWa" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs rounded-xl transition shadow-md shadow-emerald-600/20 flex items-center gap-2">
-                        <i class="fa-solid fa-floppy-disk"></i> Simpan No WA
+                    <button type="submit" id="btnSaveWa" class="px-5 py-2.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 rounded-xl shadow-md transition flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>Simpan No WA</span>
                     </button>
                 </div>
             </form>
+
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-400 text-xs py-4 text-center border-t border-slate-800 mt-auto">
-        <p>&copy; 2026 SMK Negeri 1 Bebandem - Portal Data Siswa PKL & Guru Pembimbing.</p>
-    </footer>
+    <!-- MODAL: Detail Siswa Complete View -->
+    <div id="detailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 space-y-5 transform transition-all scale-100">
+            
+            <div class="flex items-start justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-user-graduate"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-slate-800 text-lg leading-tight" id="modalDetailNama">-</h3>
+                        <p class="text-xs font-semibold text-emerald-600" id="modalDetailKelas">-</p>
+                    </div>
+                </div>
+                <button onclick="closeDetailModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
 
+            <!-- Detailed Grid Items -->
+            <div class="space-y-3.5 text-xs sm:text-sm">
+                <!-- DUDI -->
+                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100 flex items-start gap-3">
+                    <i class="fa-solid fa-building text-blue-600 mt-1"></i>
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">DUDI / Lokasi PKL</span>
+                        <span class="font-bold text-slate-800" id="modalDetailDudi">-</span>
+                    </div>
+                </div>
+
+                <!-- Guru Pembimbing & WA -->
+                <div class="p-3 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex items-start justify-between gap-3">
+                    <div class="flex items-start gap-3">
+                        <i class="fa-solid fa-user-tie text-emerald-600 mt-1"></i>
+                        <div>
+                            <span class="block text-[10px] font-bold uppercase tracking-wider text-emerald-700">Guru Pembimbing</span>
+                            <span class="font-bold text-slate-800" id="modalDetailGuru">-</span>
+                            <span class="block text-xs font-mono text-slate-500" id="modalDetailWaGuruText">-</span>
+                        </div>
+                    </div>
+                    <div id="modalDetailWaGuruBtn"></div>
+                </div>
+
+                <!-- Instruktur DUDI & WA -->
+                <div class="p-3 bg-purple-50/50 rounded-2xl border border-purple-100 flex items-start justify-between gap-3">
+                    <div class="flex items-start gap-3">
+                        <i class="fa-solid fa-user-gear text-purple-600 mt-1"></i>
+                        <div>
+                            <span class="block text-[10px] font-bold uppercase tracking-wider text-purple-700">Instruktur DUDI</span>
+                            <span class="font-bold text-slate-800" id="modalDetailInstruktur">-</span>
+                            <span class="block text-xs font-mono text-slate-500" id="modalDetailWaInstrukturText">-</span>
+                        </div>
+                    </div>
+                    <div id="modalDetailWaInstrukturBtn"></div>
+                </div>
+
+                <!-- No WA Siswa -->
+                <div class="p-3 bg-amber-50/50 rounded-2xl border border-amber-100 flex items-start justify-between gap-3">
+                    <div class="flex items-start gap-3">
+                        <i class="fa-brands fa-whatsapp text-amber-600 mt-1 text-base"></i>
+                        <div>
+                            <span class="block text-[10px] font-bold uppercase tracking-wider text-amber-700">No. WA Siswa</span>
+                            <span class="font-bold font-mono text-slate-800" id="modalDetailWaSiswaText">Belum Diisi</span>
+                        </div>
+                    </div>
+                    <div id="modalDetailWaSiswaBtn"></div>
+                </div>
+            </div>
+
+            <div class="pt-2 text-right">
+                <button onclick="closeDetailModal()" class="px-5 py-2 bg-slate-800 text-white font-semibold text-xs rounded-xl hover:bg-slate-700 transition">
+                    Tutup
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Application Logic Script -->
     <script>
-        // Spreadsheet Config
+        // Google Sheet Constants
         const SPREADSHEET_ID = '1gjQcd_iHK_hz8-LfaWiy1LMpxV3vWS-kuiLa-W0tmy0';
         const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
 
-        // Optional Google Apps Script Web App URL for writing back to Google Sheets Column I
-        // Instructions: Deploy Google Apps Script on your Sheet to auto-write Column I if required.
+        // Optional Google Apps Script Web App URL for direct Column I writing
         const APPS_SCRIPT_URL = ''; 
 
-        // Default Sample Data Fallback
-        const FALLBACK_DATA = [
-            { no: 1, nama: "Ahmad Rizky Pratama", kelas: "XII RPL 1", dudi: "PT. Teknologi Bangsa", guru: "Drs. Budi Santoso, M.Pd", waGuru: "081234567890", instruktur: "Eko Prasetyo, S.Kom", waInstruktur: "082198765432", waSiswa: "081999111222" },
-            { no: 2, nama: "Siti Nurhaliza", kelas: "XII RPL 1", dudi: "CV. Media Kreatif Jaya", guru: "Siti Rahmawati, S.Pd", waGuru: "081345678901", instruktur: "Dewi Sartika", waInstruktur: "082287654321", waSiswa: "081999222333" },
-            { no: 3, nama: "Bagas Saputra", kelas: "XII TKJ 2", dudi: "PT. Telkom Indonesia", guru: "Drs. Budi Santoso, M.Pd", waGuru: "081234567890", instruktur: "Hendra Wijaya", waInstruktur: "082376543210", waSiswa: "" },
-            { no: 4, nama: "Dewi Anggraini", kelas: "XII TKJ 2", dudi: "PT. Network Solusindo", guru: "Agus Setiawan, S.T", waGuru: "081456789012", instruktur: "Rian Hidayat", waInstruktur: "082465432109", waSiswa: "" },
-            { no: 5, nama: "Fajar Ramadan", kelas: "XII MM 3", dudi: "Studio Animasi Nusantara", guru: "Siti Rahmawati, S.Pd", waGuru: "081345678901", instruktur: "Maya Indah", waInstruktur: "082554321098", waSiswa: "" }
+        // Local Storage Key for WA Siswa
+        const STORAGE_KEY_WA = 'SMKN1_BEBANDEM_WA_SISWA_CACHE';
+
+        // Fallback Sample Data
+        const sampleData = [
+            { no: "1", nama: "I Gede Agus Permana", kelas: "XII RPL 1", dudi: "PT Bali Media Utama", guru: "I Wayan Sudiarta, S.Kom", waGuru: "081234567891", instruktur: "Made Rai", waInstruktur: "081987654321", waSiswa: "" },
+            { no: "2", nama: "Ni Kadek Sri Wahyuni", kelas: "XII RPL 1", dudi: "PT Bali Media Utama", guru: "I Wayan Sudiarta, S.Kom", waGuru: "081234567891", instruktur: "Made Rai", waInstruktur: "081987654321", waSiswa: "" },
+            { no: "3", nama: "I Komang Putra Jaya", kelas: "XII TKJ 2", dudi: "CV Karangasem Net", guru: "Ni Luh Putu Dewi, S.T", waGuru: "081338123456", instruktur: "Gede Ketut", waInstruktur: "085237000111", waSiswa: "" },
+            { no: "4", nama: "Ni Made Anjani", kelas: "XII AKL 1", dudi: "Bank BPD Bali Capem Bebandem", guru: "Dra. Ni Nyoman Sukarni", waGuru: "081779000888", instruktur: "Ibu Ketut Suparni", waInstruktur: "081239888777", waSiswa: "" },
+            { no: "5", nama: "I Ketut Budiarta", kelas: "XII TKRO 1", dudi: "Bengkel Honda Bebandem", guru: "I Nengah Arta, S.Pd", waGuru: "085100998877", instruktur: "Pak Wayan Budi", waInstruktur: "087860112233", waSiswa: "" }
         ];
 
+        // State Variables
         let allStudents = [];
         let filteredStudents = [];
-        let currentView = 'card';
+        let currentView = 'grid';
 
-        // Local storage helpers for WA Siswa (Column I override / sync)
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchDataFromSheet();
+        });
+
+        // Helper: Format WA Number into international format (62...)
+        function formatWaNumber(phone) {
+            if (!phone) return '';
+            let cleaned = String(phone).replace(/\D/g, '');
+            if (cleaned.startsWith('0')) {
+                cleaned = '62' + cleaned.substring(1);
+            }
+            return cleaned;
+        }
+
+        // Helper: Get WA Storage Cache
         function getSavedWaStorage() {
             try {
-                return JSON.parse(localStorage.getItem('saved_wa_siswa_map') || '{}');
+                return JSON.parse(localStorage.getItem(STORAGE_KEY_WA)) || {};
             } catch (e) {
                 return {};
             }
         }
 
+        // Helper: Set WA Storage Cache
         function setSavedWaStorage(nama, waNumber) {
-            try {
-                const map = getSavedWaStorage();
-                map[nama] = waNumber;
-                localStorage.setItem('saved_wa_siswa_map', JSON.stringify(map));
-            } catch (e) {
-                console.warn('Gagal menyimpan ke LocalStorage', e);
-            }
+            const cache = getSavedWaStorage();
+            cache[nama] = waNumber;
+            localStorage.setItem(STORAGE_KEY_WA, JSON.stringify(cache));
         }
 
-        // DOM Elements
-        const filterNama = document.getElementById('filterNama');
-        const filterKelas = document.getElementById('filterKelas');
-        const filterDudi = document.getElementById('filterDudi');
-        const filterGuru = document.getElementById('filterGuru');
-
-        async function fetchSpreadsheetData() {
+        async function fetchDataFromSheet(isManualRefresh = false) {
+            showLoading(true);
             const refreshIcon = document.getElementById('refreshIcon');
-            const syncStatus = document.getElementById('syncStatus');
-            
-            refreshIcon.classList.add('fa-spin');
-            syncStatus.className = "inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 font-medium";
-            syncStatus.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> Mengambil Data...`;
+            if (refreshIcon) refreshIcon.classList.add('fa-spin');
 
             try {
                 const response = await fetch(GVIZ_URL);
-                if (!response.ok) throw new Error('Network response failed');
-                
-                const text = await response.text();
-                const jsonMatch = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
-                
-                if (jsonMatch && jsonMatch[1]) {
-                    const parsedData = JSON.parse(jsonMatch[1]);
-                    const rows = parsedData.table.rows || [];
-                    const localWaMap = getSavedWaStorage();
-                    
-                    allStudents = rows.map((row, index) => {
-                        const cells = row.c || [];
-                        const namaSiswa = String(cells[1]?.v || cells[1]?.f || '').trim();
-                        // Column I is index 8 (NO WA SISWA)
-                        const rawWaSiswa = String(cells[8]?.v || cells[8]?.f || '').trim();
-                        // Always prioritize the latest saved number from localStorage if present
-                        const waSiswa = localWaMap[namaSiswa] || rawWaSiswa;
-
-                        return {
-                            no: cells[0]?.v || cells[0]?.f || (index + 1),
-                            nama: namaSiswa,
-                            kelas: String(cells[2]?.v || cells[2]?.f || '').trim(),
-                            dudi: String(cells[3]?.v || cells[3]?.f || '').trim(),
-                            guru: String(cells[4]?.v || cells[4]?.f || '').trim(),
-                            waGuru: String(cells[5]?.v || cells[5]?.f || '').trim(),
-                            instruktur: String(cells[6]?.v || cells[6]?.f || '').trim(),
-                            waInstruktur: String(cells[7]?.v || cells[7]?.f || '').trim(),
-                            waSiswa: waSiswa
-                        };
-                    }).filter(student => student.nama !== '' && student.nama !== 'NAMA SISWA');
-
-                    if (allStudents.length === 0) throw new Error('Empty parsed data');
-
-                    syncStatus.className = "inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium";
-                    syncStatus.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Tersinkron Spreadsheet`;
-                } else {
-                    throw new Error('Invalid JSON format');
+                if (!response.ok) {
+                    throw new Error(`HTTP Error Status: ${response.status}`);
                 }
-            } catch (error) {
-                console.warn('Gagal mengambil spreadsheet live, menggunakan fallback data:', error);
-                const localWaMap = getSavedWaStorage();
-                allStudents = FALLBACK_DATA.map(s => ({
+                
+                const rawText = await response.text();
+
+                // CRITICAL FIX: Guard against HTML response (e.g., Google login page or private spreadsheet error)
+                if (rawText.trim().startsWith('<')) {
+                    throw new Error('Spreadsheet mengembalikan format HTML (Bukan JSON). Kemungkinan Spreadsheet disetel Private/Terbatas.');
+                }
+
+                // Parse Google Visualization JSON structure
+                let jsonString = '';
+                const match = rawText.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);?/);
+                if (match && match[1]) {
+                    jsonString = match[1];
+                } else {
+                    const firstBrace = rawText.indexOf('{');
+                    const lastBrace = rawText.lastIndexOf('}');
+                    if (firstBrace !== -1 && lastBrace !== -1) {
+                        jsonString = rawText.substring(firstBrace, lastBrace + 1);
+                    }
+                }
+
+                if (!jsonString || jsonString.trim().startsWith('<')) {
+                    throw new Error('Data GViz Google Sheet tidak valid.');
+                }
+
+                const parsedData = JSON.parse(jsonString);
+                const rows = parsedData.table ? parsedData.table.rows : [];
+
+                if (!rows || rows.length === 0) {
+                    throw new Error('Data Spreadsheet kosong.');
+                }
+
+                const savedWaMap = getSavedWaStorage();
+
+                // Map Rows into Student Objects
+                allStudents = rows.map((row, index) => {
+                    const c = row.c || [];
+                    const getVal = (idx) => (c[idx] && c[idx].v !== null && c[idx].v !== undefined) ? String(c[idx].v).trim() : '';
+                    
+                    const nama = getVal(1); // Kolom B
+                    const waSheet = getVal(8); // Kolom I (No WA Siswa)
+                    const waLocal = savedWaMap[nama] || '';
+
+                    return {
+                        no: getVal(0) || String(index + 1),
+                        nama: nama,
+                        kelas: getVal(2),          // Kolom C
+                        dudi: getVal(3),           // Kolom D
+                        guru: getVal(4),           // Kolom E
+                        waGuru: getVal(5),         // Kolom F
+                        instruktur: getVal(6),     // Kolom G
+                        waInstruktur: getVal(7),   // Kolom H
+                        waSiswa: waSheet || waLocal // Prioritize sheet Column I, fallback to local
+                    };
+                }).filter(s => s.nama !== '' && s.nama.toLowerCase() !== 'nama siswa');
+
+                showAlert('success', 'Data Berhasil Dimuat!', `Terhubung secara live dengan Google Spreadsheet. Ditemukan ${allStudents.length} data siswa.`);
+
+            } catch (err) {
+                console.warn('Gagal memuat dari Google Sheets:', err.message);
+                
+                // Fallback to local sample data + storage
+                const savedWaMap = getSavedWaStorage();
+                allStudents = sampleData.map(s => ({
                     ...s,
-                    waSiswa: localWaMap[s.nama] || s.waSiswa
+                    waSiswa: savedWaMap[s.nama] || s.waSiswa || ''
                 }));
-                syncStatus.className = "inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 font-medium";
-                syncStatus.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-400"></span> Data Demo (Lokal)`;
+
+                showAlert('warning', 'Menggunakan Data Lokal', `Gagal menghubungkan ke Live Spreadsheet (${err.message}). Pastikan spreadsheet disetel "Siapa saja yang memiliki link" (Public).`);
             } finally {
-                refreshIcon.classList.remove('fa-spin');
-                populateDropdowns();
+                showLoading(false);
+                if (refreshIcon) refreshIcon.classList.remove('fa-spin');
+                populateDropdownFilters();
+                populateModalKelasDropdown();
                 applyFilters();
             }
         }
 
-        function populateDropdowns() {
-            const extractUnique = (key) => [...new Set(allStudents.map(s => s[key]).filter(Boolean))].sort();
+        function populateDropdownFilters() {
+            const kelasSet = new Set();
+            const dudiSet = new Set();
+            const guruSet = new Set();
 
-            const kelasList = extractUnique('kelas');
-            const dudiList = extractUnique('dudi');
-            const guruList = extractUnique('guru');
+            allStudents.forEach(s => {
+                if (s.kelas) kelasSet.add(s.kelas);
+                if (s.dudi) dudiSet.add(s.dudi);
+                if (s.guru) guruSet.add(s.guru);
+            });
 
-            fillSelect(filterKelas, kelasList, "Semua Kelas");
-            fillSelect(filterDudi, dudiList, "Semua DUDI");
-            fillSelect(filterGuru, guruList, "Semua Guru Pembimbing");
+            // Populate Filter Dropdowns
+            fillSelectOptions('filterKelas', Array.from(kelasSet).sort(), '-- Semua Kelas --');
+            fillSelectOptions('filterDudi', Array.from(dudiSet).sort(), '-- Semua DUDI --');
+            fillSelectOptions('filterGuru', Array.from(guruSet).sort(), '-- Semua Guru Pembimbing --');
 
-            // Populate Modal WA Kelas Dropdown
-            fillSelect(document.getElementById('modalWaKelas'), kelasList, "-- Pilih Kelas --");
+            // Update Stats Dashboard
+            document.getElementById('statTotalSiswa').textContent = allStudents.length;
+            document.getElementById('statTotalDudi').textContent = dudiSet.size;
+            document.getElementById('statTotalGuru').textContent = guruSet.size;
+            document.getElementById('statTotalKelas').textContent = kelasSet.size;
         }
 
-        function fillSelect(selectElement, items, defaultText) {
-            const currentValue = selectElement.value;
-            selectElement.innerHTML = `<option value="">${defaultText}</option>`;
+        function fillSelectOptions(elemId, items, defaultLabel) {
+            const select = document.getElementById(elemId);
+            const currentVal = select.value;
+            select.innerHTML = `<option value="">${defaultLabel}</option>`;
             items.forEach(item => {
                 const opt = document.createElement('option');
                 opt.value = item;
                 opt.textContent = item;
-                selectElement.appendChild(opt);
+                select.appendChild(opt);
             });
-            selectElement.value = currentValue;
-        }
-
-        // WhatsApp Link Generator
-        function getWaLink(number, message = '') {
-            if (!number) return '#';
-            let cleaned = String(number).replace(/\D/g, '');
-            if (cleaned.startsWith('0')) {
-                cleaned = '62' + cleaned.slice(1);
-            }
-            const encodedMsg = encodeURIComponent(message);
-            return `https://wa.me/${cleaned}${encodedMsg ? '?text=' + encodedMsg : ''}`;
+            select.value = currentVal;
         }
 
         function applyFilters() {
-            const valNama = filterNama.value.toLowerCase().trim();
-            const valKelas = filterKelas.value;
-            const valDudi = filterDudi.value;
-            const valGuru = filterGuru.value;
-
-            const isFiltered = valNama || valKelas || valDudi || valGuru;
-            document.getElementById('filterBadge').classList.toggle('hidden', !isFiltered);
+            const filterNama = document.getElementById('filterNama').value.toLowerCase().trim();
+            const filterKelas = document.getElementById('filterKelas').value;
+            const filterDudi = document.getElementById('filterDudi').value;
+            const filterGuru = document.getElementById('filterGuru').value;
 
             filteredStudents = allStudents.filter(s => {
-                const matchNama = !valNama || s.nama.toLowerCase().includes(valNama);
-                const matchKelas = !valKelas || s.kelas === valKelas;
-                const matchDudi = !valDudi || s.dudi === valDudi;
-                const matchGuru = !valGuru || s.guru === valGuru;
+                const matchNama = !filterNama || s.nama.toLowerCase().includes(filterNama);
+                const matchKelas = !filterKelas || s.kelas === filterKelas;
+                const matchDudi = !filterDudi || s.dudi === filterDudi;
+                const matchGuru = !filterGuru || s.guru === filterGuru;
                 return matchNama && matchKelas && matchDudi && matchGuru;
             });
 
-            updateStats();
-            renderView();
+            renderData();
         }
 
-        function updateStats() {
-            document.getElementById('statTotalSiswa').textContent = allStudents.length;
-            document.getElementById('statTotalDudi').textContent = new Set(allStudents.map(s => s.dudi).filter(Boolean)).size;
-            document.getElementById('statTotalGuru').textContent = new Set(allStudents.map(s => s.guru).filter(Boolean)).size;
-            document.getElementById('statTotalKelas').textContent = new Set(allStudents.map(s => s.kelas).filter(Boolean)).size;
-
-            document.getElementById('resultCount').textContent = `Menampilkan ${filteredStudents.length} dari ${allStudents.length} siswa`;
+        function resetFilters() {
+            document.getElementById('filterNama').value = '';
+            document.getElementById('filterKelas').value = '';
+            document.getElementById('filterDudi').value = '';
+            document.getElementById('filterGuru').value = '';
+            applyFilters();
         }
 
-        function renderView() {
-            const cardContainer = document.getElementById('cardViewContainer');
-            const tableBody = document.getElementById('tableBody');
+        function renderData() {
+            const gridView = document.getElementById('gridView');
+            const tableView = document.getElementById('tableView');
             const emptyState = document.getElementById('emptyState');
 
             if (filteredStudents.length === 0) {
-                cardContainer.classList.add('hidden');
-                document.getElementById('tableViewContainer').classList.add('hidden');
+                gridView.innerHTML = '';
+                document.getElementById('tableBody').innerHTML = '';
+                gridView.classList.add('hidden');
+                tableView.classList.add('hidden');
                 emptyState.classList.remove('hidden');
                 return;
             }
 
             emptyState.classList.add('hidden');
 
-            if (currentView === 'card') {
-                cardContainer.classList.remove('hidden');
-                document.getElementById('tableViewContainer').classList.add('hidden');
-                
-                cardContainer.innerHTML = filteredStudents.map((s, idx) => {
-                    const waSiswaUrl = getWaLink(s.waSiswa, `Halo ${s.nama}, perihal informasi PKL...`);
-                    const waGuruUrl = getWaLink(s.waGuru, `Halo Bapak/Ibu ${s.guru}, saya ingin menanyakan mengenai PKL siswa ${s.nama}.`);
-                    const waInstrukturUrl = getWaLink(s.waInstruktur, `Halo Bapak/Ibu ${s.instruktur}, saya ingin konfirmasi PKL siswa ${s.nama}.`);
+            if (currentView === 'grid') {
+                gridView.classList.remove('hidden');
+                tableView.classList.add('hidden');
+                renderGridView();
+            } else {
+                gridView.classList.add('hidden');
+                tableView.classList.remove('hidden');
+                renderTableView();
+            }
+        }
 
-                    return `
-                    <div class="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition border border-slate-200/80 flex flex-col justify-between space-y-4 relative overflow-hidden group">
-                        <div class="absolute top-0 left-0 w-1.5 h-full bg-brand-500 rounded-l-2xl"></div>
-                        
-                        <div>
-                            <!-- Header Info -->
-                            <div class="flex justify-between items-start gap-2 mb-2">
-                                <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 border border-brand-200/80">
-                                    ${s.kelas || 'N/A'}
+        function renderGridView() {
+            const gridView = document.getElementById('gridView');
+            gridView.innerHTML = filteredStudents.map((s, idx) => {
+                const waGuruClean = formatWaNumber(s.waGuru);
+                const waInstrukturClean = formatWaNumber(s.waInstruktur);
+                const waSiswaClean = formatWaNumber(s.waSiswa);
+
+                return `
+                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-200 space-y-4 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <!-- Top Header -->
+                        <div class="flex items-start justify-between gap-2 border-b border-slate-100 pb-2.5">
+                            <div>
+                                <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-extrabold text-[10px] tracking-wide uppercase border border-emerald-100">
+                                    ${escapeHtml(s.kelas)}
                                 </span>
-                                <span class="text-xs font-medium text-slate-400">#${s.no || (idx + 1)}</span>
+                                <h3 class="font-bold text-slate-800 text-base mt-1 leading-snug">${escapeHtml(s.nama)}</h3>
+                            </div>
+                            <span class="text-xs font-mono font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-lg">
+                                #${s.no || (idx + 1)}
+                            </span>
+                        </div>
+
+                        <!-- Data Fields -->
+                        <div class="space-y-2 text-xs">
+                            <!-- DUDI -->
+                            <div class="flex items-start gap-2 text-slate-700">
+                                <i class="fa-solid fa-building text-blue-500 mt-0.5 shrink-0 w-4"></i>
+                                <div>
+                                    <span class="text-slate-400 text-[10px] font-bold uppercase block">DUDI</span>
+                                    <span class="font-semibold">${escapeHtml(s.dudi || '-')}</span>
+                                </div>
                             </div>
 
-                            <div class="flex items-start justify-between gap-2">
-                                <h3 class="text-lg font-bold text-slate-800 leading-snug group-hover:text-brand-600 transition">
-                                    ${s.nama}
-                                </h3>
-                                ${s.waSiswa ? `
-                                    <a href="${waSiswaUrl}" target="_blank" title="Chat WA Siswa (${s.waSiswa})" class="shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-medium text-[11px] transition border border-emerald-200">
-                                        <i class="fa-brands fa-whatsapp text-emerald-600 text-xs"></i> WA
+                            <!-- Guru Pembimbing -->
+                            <div class="flex items-start justify-between gap-1 text-slate-700">
+                                <div class="flex items-start gap-2">
+                                    <i class="fa-solid fa-user-tie text-emerald-600 mt-0.5 shrink-0 w-4"></i>
+                                    <div>
+                                        <span class="text-slate-400 text-[10px] font-bold uppercase block">Guru Pembimbing</span>
+                                        <span class="font-semibold">${escapeHtml(s.guru || '-')}</span>
+                                    </div>
+                                </div>
+                                ${waGuruClean ? `
+                                    <a href="https://wa.me/${waGuruClean}" target="_blank" title="Chat WA Guru"
+                                        class="p-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-lg transition shrink-0">
+                                        <i class="fa-brands fa-whatsapp text-sm"></i>
                                     </a>
                                 ` : ''}
                             </div>
 
-                            <!-- DUDI -->
-                            <div class="mt-3 flex items-start gap-2 text-xs text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                                <i class="fa-solid fa-building text-amber-500 mt-0.5"></i>
-                                <div>
-                                    <p class="font-medium text-slate-400 text-[10px] uppercase">DUDI / Industri</p>
-                                    <p class="font-semibold text-slate-700">${s.dudi || '-'}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Details & WhatsApp Contacts -->
-                        <div class="space-y-2 border-t border-slate-100 pt-3 text-xs">
-                            <!-- Guru Pembimbing -->
-                            <div class="flex items-center justify-between">
-                                <div class="truncate max-w-[170px]">
-                                    <p class="text-[10px] font-medium text-slate-400">Guru Pembimbing</p>
-                                    <p class="font-medium text-slate-700 truncate" title="${s.guru}">${s.guru || '-'}</p>
-                                </div>
-                                ${s.waGuru ? `
-                                    <a href="${waGuruUrl}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-medium text-[11px] transition">
-                                        <i class="fa-brands fa-whatsapp text-emerald-600"></i> WA Guru
-                                    </a>
-                                ` : '<span class="text-slate-300 text-[10px]">Tidak ada WA</span>'}
-                            </div>
-
                             <!-- Instruktur DUDI -->
-                            <div class="flex items-center justify-between">
-                                <div class="truncate max-w-[170px]">
-                                    <p class="text-[10px] font-medium text-slate-400">Instruktur DUDI</p>
-                                    <p class="font-medium text-slate-700 truncate" title="${s.instruktur}">${s.instruktur || '-'}</p>
+                            <div class="flex items-start justify-between gap-1 text-slate-700">
+                                <div class="flex items-start gap-2">
+                                    <i class="fa-solid fa-user-gear text-purple-600 mt-0.5 shrink-0 w-4"></i>
+                                    <div>
+                                        <span class="text-slate-400 text-[10px] font-bold uppercase block">Instruktur DUDI</span>
+                                        <span class="font-semibold">${escapeHtml(s.instruktur || '-')}</span>
+                                    </div>
                                 </div>
-                                ${s.waInstruktur ? `
-                                    <a href="${waInstrukturUrl}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium text-[11px] transition">
-                                        <i class="fa-brands fa-whatsapp text-blue-600"></i> WA Instruktur
+                                ${waInstrukturClean ? `
+                                    <a href="https://wa.me/${waInstrukturClean}" target="_blank" title="Chat WA Instruktur"
+                                        class="p-1.5 bg-purple-50 text-purple-600 hover:bg-purple-600 hover:text-white rounded-lg transition shrink-0">
+                                        <i class="fa-brands fa-whatsapp text-sm"></i>
                                     </a>
-                                ` : '<span class="text-slate-300 text-[10px]">Tidak ada WA</span>'}
+                                ` : ''}
+                            </div>
+
+                            <!-- WA Siswa -->
+                            <div class="flex items-center justify-between pt-1 border-t border-slate-100">
+                                <span class="text-slate-400 text-[11px] font-semibold flex items-center gap-1">
+                                    <i class="fa-brands fa-whatsapp text-emerald-600"></i> No. WA Siswa:
+                                </span>
+                                ${s.waSiswa ? `
+                                    <a href="https://wa.me/${waSiswaClean}" target="_blank" class="font-mono text-xs font-bold text-emerald-600 hover:underline">
+                                        ${escapeHtml(s.waSiswa)}
+                                    </a>
+                                ` : `
+                                    <button onclick="openWaModalForStudent('${escapeHtml(s.kelas)}', '${escapeHtml(s.nama)}')" class="text-[11px] text-emerald-600 hover:text-emerald-700 font-bold underline">
+                                        + Tambah WA
+                                    </button>
+                                `}
                             </div>
                         </div>
-
-                        <!-- Action Button -->
-                        <button onclick="openModal(${idx})" class="w-full text-center py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs transition flex items-center justify-center gap-1">
-                            <i class="fa-solid fa-circle-info"></i> Detail Lengkap
-                        </button>
                     </div>
-                    `;
-                }).join('');
-            } else {
-                cardContainer.classList.add('hidden');
-                document.getElementById('tableViewContainer').classList.remove('hidden');
 
-                tableBody.innerHTML = filteredStudents.map((s, idx) => {
-                    const waSiswaUrl = getWaLink(s.waSiswa, `Halo ${s.nama}, perihal PKL...`);
-                    const waGuruUrl = getWaLink(s.waGuru, `Halo Bapak/Ibu ${s.guru}, saya ingin menanyakan mengenai PKL siswa ${s.nama}.`);
-                    const waInstrukturUrl = getWaLink(s.waInstruktur, `Halo Bapak/Ibu ${s.instruktur}, saya ingin konfirmasi PKL siswa ${s.nama}.`);
-
-                    return `
-                    <tr class="hover:bg-slate-50 transition text-slate-700">
-                        <td class="py-3 px-4 text-center font-medium text-slate-400">${s.no || (idx + 1)}</td>
-                        <td class="py-3 px-4 font-semibold text-slate-800">${s.nama}</td>
-                        <td class="py-3 px-4">
-                            <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 border border-brand-200">
-                                ${s.kelas || '-'}
-                            </span>
-                        </td>
-                        <td class="py-3 px-4 text-center">
-                            ${s.waSiswa ? `<a href="${waSiswaUrl}" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-mono text-xs inline-flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-200"><i class="fa-brands fa-whatsapp"></i> ${s.waSiswa}</a>` : '<span class="text-slate-300 text-xs">-</span>'}
-                        </td>
-                        <td class="py-3 px-4 font-medium">${s.dudi || '-'}</td>
-                        <td class="py-3 px-4">${s.guru || '-'}</td>
-                        <td class="py-3 px-4 text-center">
-                            ${s.waGuru ? `<a href="${waGuruUrl}" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-mono text-xs inline-flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded-md"><i class="fa-brands fa-whatsapp"></i> ${s.waGuru}</a>` : '-'}
-                        </td>
-                        <td class="py-3 px-4">${s.instruktur || '-'}</td>
-                        <td class="py-3 px-4 text-center">
-                            ${s.waInstruktur ? `<a href="${waInstrukturUrl}" target="_blank" class="text-blue-600 hover:text-blue-800 font-mono text-xs inline-flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-md"><i class="fa-brands fa-whatsapp"></i> ${s.waInstruktur}</a>` : '-'}
-                        </td>
-                    </tr>
-                    `;
-                }).join('');
-            }
+                    <!-- Footer Action -->
+                    <button onclick="openDetailModal(${idx})" class="w-full py-2 bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 font-semibold text-xs rounded-xl transition border border-slate-200/60 flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-eye"></i> Detail Lengkap
+                    </button>
+                </div>
+                `;
+            }).join('');
         }
 
-        // Modal "Tambah / Edit No WA Siswa" Dynamic Dropdown handlers
+        function renderTableView() {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = filteredStudents.map((s, idx) => {
+                const waGuruClean = formatWaNumber(s.waGuru);
+                const waInstrukturClean = formatWaNumber(s.waInstruktur);
+
+                return `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="py-3 px-4 font-mono text-slate-400">${s.no || (idx + 1)}</td>
+                    <td class="py-3 px-4 font-bold text-slate-800">${escapeHtml(s.nama)}</td>
+                    <td class="py-3 px-4 font-medium text-slate-600">${escapeHtml(s.kelas)}</td>
+                    <td class="py-3 px-4 text-slate-700">${escapeHtml(s.dudi || '-')}</td>
+                    <td class="py-3 px-4">
+                        <div class="flex items-center justify-between gap-1">
+                            <span>${escapeHtml(s.guru || '-')}</span>
+                            ${waGuruClean ? `<a href="https://wa.me/${waGuruClean}" target="_blank" class="text-emerald-600 hover:text-emerald-800"><i class="fa-brands fa-whatsapp text-base"></i></a>` : ''}
+                        </div>
+                    </td>
+                    <td class="py-3 px-4">
+                        <div class="flex items-center justify-between gap-1">
+                            <span>${escapeHtml(s.instruktur || '-')}</span>
+                            ${waInstrukturClean ? `<a href="https://wa.me/${waInstrukturClean}" target="_blank" class="text-purple-600 hover:text-purple-800"><i class="fa-brands fa-whatsapp text-base"></i></a>` : ''}
+                        </div>
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <button onclick="openDetailModal(${idx})" class="px-3 py-1 bg-slate-100 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg font-bold text-xs transition">
+                            Detail
+                        </button>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+        }
+
         function openWaModal() {
-            document.getElementById('waSiswaModal').classList.remove('hidden');
+            document.getElementById('waModal').classList.remove('hidden');
             document.getElementById('waStatusMsg').classList.add('hidden');
-            document.getElementById('formWaSiswa').reset();
-            onWaKelasChange();
+            document.getElementById('waForm').reset();
+            document.getElementById('modalWaNama').disabled = true;
+            document.getElementById('modalWaNama').innerHTML = `<option value="">-- Pilih Nama Siswa --</option>`;
+        }
+
+        function openWaModalForStudent(kelas, nama) {
+            openWaModal();
+            const kelasSelect = document.getElementById('modalWaKelas');
+            kelasSelect.value = kelas;
+            onModalKelasChange();
+            
+            const namaSelect = document.getElementById('modalWaNama');
+            namaSelect.value = nama;
+            onModalNamaChange();
         }
 
         function closeWaModal() {
-            document.getElementById('waSiswaModal').classList.add('hidden');
+            document.getElementById('waModal').classList.add('hidden');
         }
 
-        function onWaKelasChange() {
-            const selectedKelas = document.getElementById('modalWaKelas').value;
-            const selectWaNama = document.getElementById('modalWaNama');
+        function populateModalKelasDropdown() {
+            const kelasSet = new Set();
+            allStudents.forEach(s => { if (s.kelas) kelasSet.add(s.kelas); });
             
-            selectWaNama.innerHTML = '<option value="">-- Pilih Nama Siswa --</option>';
+            const modalKelasSelect = document.getElementById('modalWaKelas');
+            modalKelasSelect.innerHTML = `<option value="">-- Pilih Kelas --</option>`;
+            Array.from(kelasSet).sort().forEach(k => {
+                const opt = document.createElement('option');
+                opt.value = k;
+                opt.textContent = k;
+                modalKelasSelect.appendChild(opt);
+            });
+        }
 
-            const studentsInClass = selectedKelas 
-                ? allStudents.filter(s => s.kelas === selectedKelas)
-                : allStudents;
+        function onModalKelasChange() {
+            const selectedKelas = document.getElementById('modalWaKelas').value;
+            const namaSelect = document.getElementById('modalWaNama');
+            
+            if (!selectedKelas) {
+                namaSelect.disabled = true;
+                namaSelect.innerHTML = `<option value="">-- Pilih Nama Siswa --</option>`;
+                return;
+            }
 
-            studentsInClass.forEach(s => {
+            const studentsInKelas = allStudents.filter(s => s.kelas === selectedKelas);
+            namaSelect.innerHTML = `<option value="">-- Pilih Nama Siswa --</option>`;
+            studentsInKelas.forEach(s => {
                 const opt = document.createElement('option');
                 opt.value = s.nama;
-                opt.textContent = `${s.nama} (${s.kelas})`;
-                selectWaNama.appendChild(opt);
+                opt.textContent = s.nama;
+                namaSelect.appendChild(opt);
             });
-
-            document.getElementById('modalWaInput').value = '';
+            namaSelect.disabled = false;
         }
 
-        function onWaNamaChange() {
+        function onModalNamaChange() {
             const selectedNama = document.getElementById('modalWaNama').value;
+            const inputWa = document.getElementById('modalWaInput');
             const student = allStudents.find(s => s.nama === selectedNama);
             if (student && student.waSiswa) {
-                document.getElementById('modalWaInput').value = student.waSiswa;
+                inputWa.value = student.waSiswa;
             } else {
-                document.getElementById('modalWaInput').value = '';
+                inputWa.value = '';
             }
         }
 
@@ -771,7 +869,7 @@
             // 2. Save to local storage for persistence across reloads
             setSavedWaStorage(selectedNama, waNumber);
 
-            // 3. Attempt POST/GET update to Google Apps Script if endpoint configured
+            // 3. Sync to Google Sheet via Apps Script if configured
             let syncSuccess = false;
             if (APPS_SCRIPT_URL) {
                 try {
@@ -792,110 +890,132 @@
                 btnSave.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan No WA`;
                 
                 statusMsg.className = "p-3 rounded-xl text-xs font-medium bg-emerald-100 text-emerald-800 block";
-                statusMsg.innerHTML = `<i class="fa-solid fa-circle-check"></i> No WA untuk <b>${selectedNama}</b> berhasil disimpan (${waNumber})!`;
+                if (APPS_SCRIPT_URL) {
+                    statusMsg.innerHTML = `<i class="fa-solid fa-circle-check"></i> No WA <b>${selectedNama}</b> berhasil dikirim ke Spreadsheet (Kolom I) &amp; disimpan lokal!`;
+                } else {
+                    statusMsg.innerHTML = `<i class="fa-solid fa-circle-check"></i> No WA <b>${selectedNama}</b> berhasil disimpan di Browser (Lokal). Hubungkan Apps Script untuk update Kolom I Spreadsheet.`;
+                }
 
                 applyFilters();
 
                 setTimeout(() => {
                     closeWaModal();
-                }, 1200);
+                }, 1800);
             }, 400);
         }
 
-        // Switch View Mode
-        function switchView(mode) {
-            currentView = mode;
-            const btnCard = document.getElementById('btnViewCard');
-            const btnTable = document.getElementById('btnViewTable');
+        function openDetailModal(index) {
+            const student = filteredStudents[index];
+            if (!student) return;
 
-            if (mode === 'card') {
-                btnCard.className = "px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1.5 bg-white text-slate-800 shadow-sm";
-                btnTable.className = "px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
-            } else {
-                btnTable.className = "px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1.5 bg-white text-slate-800 shadow-sm";
-                btnCard.className = "px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
-            }
-            renderView();
-        }
-
-        // Reset Filters
-        function resetFilters() {
-            filterNama.value = '';
-            filterKelas.value = '';
-            filterDudi.value = '';
-            filterGuru.value = '';
-            applyFilters();
-        }
-
-        function openModal(filteredIndex) {
-            const s = filteredStudents[filteredIndex];
-            if (!s) return;
-
-            document.getElementById('modalNama').textContent = s.nama;
-            document.getElementById('modalKelas').textContent = s.kelas || 'N/A';
-            document.getElementById('modalDudi').textContent = s.dudi || '-';
+            document.getElementById('modalDetailNama').textContent = student.nama;
+            document.getElementById('modalDetailKelas').textContent = student.kelas;
+            document.getElementById('modalDetailDudi').textContent = student.dudi || '-';
+            document.getElementById('modalDetailGuru').textContent = student.guru || '-';
+            document.getElementById('modalDetailWaGuruText').textContent = student.waGuru || 'Tidak ada no WA';
             
-            // WA Siswa Detail
-            document.getElementById('modalWaSiswaText').textContent = s.waSiswa ? `Nomor WA: ${s.waSiswa}` : 'Nomor WA Siswa belum diisi';
-            const btnWaSiswa = document.getElementById('modalBtnWaSiswa');
-            if (s.waSiswa) {
-                btnWaSiswa.href = getWaLink(s.waSiswa, `Halo ${s.nama}, perihal informasi kegiatan PKL...`);
-                btnWaSiswa.classList.remove('pointer-events-none', 'opacity-50');
-            } else {
-                btnWaSiswa.href = '#';
-                btnWaSiswa.classList.add('pointer-events-none', 'opacity-50');
-            }
+            document.getElementById('modalDetailInstruktur').textContent = student.instruktur || '-';
+            document.getElementById('modalDetailWaInstrukturText').textContent = student.waInstruktur || 'Tidak ada no WA';
 
-            // Guru Pembimbing
-            document.getElementById('modalGuru').textContent = s.guru || '-';
-            document.getElementById('modalWaGuruText').textContent = s.waGuru ? `Nomor WA: ${s.waGuru}` : 'Nomor WhatsApp tidak tersedia';
-            const btnWaGuru = document.getElementById('modalBtnWaGuru');
-            if (s.waGuru) {
-                btnWaGuru.href = getWaLink(s.waGuru, `Halo Bapak/Ibu ${s.guru}, saya ingin berkonsultasi mengenai PKL siswa ${s.nama}.`);
-                btnWaGuru.classList.remove('pointer-events-none', 'opacity-50');
-            } else {
-                btnWaGuru.href = '#';
-                btnWaGuru.classList.add('pointer-events-none', 'opacity-50');
-            }
+            document.getElementById('modalDetailWaSiswaText').textContent = student.waSiswa || 'Belum Diisi';
 
-            // Instruktur DUDI
-            document.getElementById('modalInstruktur').textContent = s.instruktur || '-';
-            document.getElementById('modalWaInstrukturText').textContent = s.waInstruktur ? `Nomor WA: ${s.waInstruktur}` : 'Nomor WhatsApp tidak tersedia';
-            const btnWaInstruktur = document.getElementById('modalBtnWaInstruktur');
-            if (s.waInstruktur) {
-                btnWaInstruktur.href = getWaLink(s.waInstruktur, `Halo Bapak/Ibu ${s.instruktur}, saya ingin bertanya mengenai siswa PKL ${s.nama}.`);
-                btnWaInstruktur.classList.remove('pointer-events-none', 'opacity-50');
-            } else {
-                btnWaInstruktur.href = '#';
-                btnWaInstruktur.classList.add('pointer-events-none', 'opacity-50');
-            }
+            // Buttons
+            const waGuruClean = formatWaNumber(student.waGuru);
+            document.getElementById('modalDetailWaGuruBtn').innerHTML = waGuruClean ? `
+                <a href="https://wa.me/${waGuruClean}" target="_blank" class="px-3 py-1.5 bg-emerald-600 text-white rounded-xl font-semibold text-xs flex items-center gap-1.5 shadow-sm hover:bg-emerald-700 transition">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> Chat
+                </a>
+            ` : '';
 
-            const modal = document.getElementById('detailModal');
-            modal.classList.remove('hidden');
+            const waInstrukturClean = formatWaNumber(student.waInstruktur);
+            document.getElementById('modalDetailWaInstrukturBtn').innerHTML = waInstrukturClean ? `
+                <a href="https://wa.me/${waInstrukturClean}" target="_blank" class="px-3 py-1.5 bg-purple-600 text-white rounded-xl font-semibold text-xs flex items-center gap-1.5 shadow-sm hover:bg-purple-700 transition">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> Chat
+                </a>
+            ` : '';
+
+            const waSiswaClean = formatWaNumber(student.waSiswa);
+            document.getElementById('modalDetailWaSiswaBtn').innerHTML = student.waSiswa ? `
+                <a href="https://wa.me/${waSiswaClean}" target="_blank" class="px-3 py-1.5 bg-amber-500 text-white rounded-xl font-semibold text-xs flex items-center gap-1.5 shadow-sm hover:bg-amber-600 transition">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> Chat
+                </a>
+            ` : `
+                <button onclick="closeDetailModal(); openWaModalForStudent('${escapeHtml(student.kelas)}', '${escapeHtml(student.nama)}')" class="px-3 py-1.5 bg-amber-100 text-amber-800 rounded-xl font-bold text-xs hover:bg-amber-200 transition">
+                    + Input
+                </button>
+            `;
+
+            document.getElementById('detailModal').classList.remove('hidden');
         }
 
-        function closeModal() {
+        function closeDetailModal() {
             document.getElementById('detailModal').classList.add('hidden');
         }
 
-        // Event Listeners
-        filterNama.addEventListener('input', applyFilters);
-        filterKelas.addEventListener('change', applyFilters);
-        filterDudi.addEventListener('change', applyFilters);
-        filterGuru.addEventListener('change', applyFilters);
+        function switchView(view) {
+            currentView = view;
+            const btnGrid = document.getElementById('btnViewGrid');
+            const btnTable = document.getElementById('btnViewTable');
 
-        // Close Modals on backdrop click
-        document.getElementById('detailModal').addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
-        });
-        document.getElementById('waSiswaModal').addEventListener('click', function(e) {
-            if (e.target === this) closeWaModal();
-        });
+            if (view === 'grid') {
+                btnGrid.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition bg-white text-emerald-700 shadow-sm";
+                btnTable.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition text-slate-500 hover:text-slate-800";
+            } else {
+                btnTable.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition bg-white text-emerald-700 shadow-sm";
+                btnGrid.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition text-slate-500 hover:text-slate-800";
+            }
+            renderData();
+        }
 
-        // Initialize on Load
-        window.addEventListener('DOMContentLoaded', () => {
-            fetchSpreadsheetData();
-        });
+        function showLoading(isLoading) {
+            const spinner = document.getElementById('loadingSpinner');
+            const gridView = document.getElementById('gridView');
+            const tableView = document.getElementById('tableView');
+
+            if (isLoading) {
+                spinner.classList.remove('hidden');
+                gridView.classList.add('hidden');
+                tableView.classList.add('hidden');
+            } else {
+                spinner.classList.add('hidden');
+            }
+        }
+
+        function showAlert(type, title, message) {
+            const alertBox = document.getElementById('statusAlert');
+            const alertIcon = document.getElementById('alertIcon');
+            const alertTitle = document.getElementById('alertTitle');
+            const alertDesc = document.getElementById('alertDesc');
+
+            alertBox.classList.remove('hidden');
+            alertTitle.textContent = title;
+            alertDesc.textContent = message;
+
+            if (type === 'success') {
+                alertBox.className = "rounded-2xl p-4 border transition-all duration-300 shadow-sm text-sm bg-emerald-50 border-emerald-200 text-emerald-800";
+                alertIcon.className = "fa-solid fa-circle-check text-lg mt-0.5 shrink-0 text-emerald-600";
+            } else if (type === 'warning') {
+                alertBox.className = "rounded-2xl p-4 border transition-all duration-300 shadow-sm text-sm bg-amber-50 border-amber-200 text-amber-800";
+                alertIcon.className = "fa-solid fa-triangle-exclamation text-lg mt-0.5 shrink-0 text-amber-600";
+            } else {
+                alertBox.className = "rounded-2xl p-4 border transition-all duration-300 shadow-sm text-sm bg-red-50 border-red-200 text-red-800";
+                alertIcon.className = "fa-solid fa-circle-xmark text-lg mt-0.5 shrink-0 text-red-600";
+            }
+        }
+
+        function dismissAlert() {
+            document.getElementById('statusAlert').classList.add('hidden');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
     </script>
 </body>
 </html>
